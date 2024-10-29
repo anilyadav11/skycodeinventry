@@ -64,7 +64,7 @@
                     value="{{ old('longitude', $region->longitude) }}" placeholder="Enter Longitude">
             </div>
 
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" class="btn btn-primary mt-3">Update</button>
         </form>
     </div>
 

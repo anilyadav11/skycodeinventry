@@ -12,7 +12,7 @@ class RegionController extends Controller
 {
     public function index()
     {
-        $regions = Region::paginate(10);
+        $regions = Region::paginate(5);
         $user = Auth::user();
         return view('regions.index', compact('regions'), ['user' => $user]);
     }

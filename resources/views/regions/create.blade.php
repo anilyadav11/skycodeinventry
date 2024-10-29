@@ -4,65 +4,66 @@
 @section('title', 'Create Sales Regions')
 
 @section('content')
-    <h2 class="my-4">Create New Region</h2>
-    <form action="{{ route('regions.store') }}" method="POST" class="needs-validation" novalidate>
-        @csrf
+    <div class="container">
+        <h2 class="my-4">Create New Region</h2>
+        <form action="{{ route('regions.store') }}" method="POST" class="needs-validation" novalidate>
+            @csrf
 
-        <!-- Region Zone Dropdown -->
-        <div class="form-group">
-            <label for="region_zone">Region Zone:</label>
-            <select name="region_zone" id="region_zone" class="form-control" required>
-                <option value="">Select Zone</option>
-                <option value="East">East</option>
-                <option value="West">West</option>
-                <option value="South">South</option>
-                <option value="North">North</option>
-            </select>
-            <div class="invalid-feedback">Please select a region zone.</div>
-        </div>
+            <!-- Region Zone Dropdown -->
+            <div class="form-group">
+                <label for="region_zone">Region Zone:</label>
+                <select name="region_zone" id="region_zone" class="form-control" required>
+                    <option value="">Select Zone</option>
+                    <option value="East">East</option>
+                    <option value="West">West</option>
+                    <option value="South">South</option>
+                    <option value="North">North</option>
+                </select>
+                <div class="invalid-feedback">Please select a region zone.</div>
+            </div>
 
-        <!-- State Dropdown -->
-        <div class="form-group">
-            <label for="state">State:</label>
-            <select id="state" name="state" class="form-control" required>
-                <option value="">Select State</option>
-            </select>
-            <div class="invalid-feedback">Please select a state.</div>
-        </div>
+            <!-- State Dropdown -->
+            <div class="form-group">
+                <label for="state">State:</label>
+                <select id="state" name="state" class="form-control" required>
+                    <option value="">Select State</option>
+                </select>
+                <div class="invalid-feedback">Please select a state.</div>
+            </div>
 
-        <!-- District Dropdown -->
-        <div class="form-group">
-            <label for="district">District:</label>
-            <select id="district" name="district" class="form-control" required>
-                <option value="">Select District</option>
-            </select>
-            <div class="invalid-feedback">Please select a district.</div>
-        </div>
+            <!-- District Dropdown -->
+            <div class="form-group">
+                <label for="district">District:</label>
+                <select id="district" name="district" class="form-control" required>
+                    <option value="">Select District</option>
+                </select>
+                <div class="invalid-feedback">Please select a district.</div>
+            </div>
 
-        <!-- Other Inputs -->
-        <div class="form-group">
-            <label for="area">Area:</label>
-            <input type="text" name="area" id="area" class="form-control" placeholder="Enter Area">
-        </div>
+            <!-- Other Inputs -->
+            <div class="form-group">
+                <label for="area">Area:</label>
+                <input type="text" name="area" id="area" class="form-control" placeholder="Enter Area">
+            </div>
 
-        <div class="form-group">
-            <label for="bzone">BZone:</label>
-            <input type="text" name="bzone" id="bzone" class="form-control" placeholder="Enter BZone">
-        </div>
+            <div class="form-group">
+                <label for="bzone">BZone:</label>
+                <input type="text" name="bzone" id="bzone" class="form-control" placeholder="Enter BZone">
+            </div>
 
-        <div class="form-group">
-            <label for="latitude">Latitude:</label>
-            <input type="text" name="latitude" id="latitude" class="form-control" placeholder="Enter Latitude">
-        </div>
+            <div class="form-group">
+                <label for="latitude">Latitude:</label>
+                <input type="text" name="latitude" id="latitude" class="form-control" placeholder="Enter Latitude">
+            </div>
 
-        <div class="form-group">
-            <label for="longitude">Longitude:</label>
-            <input type="text" name="longitude" id="longitude" class="form-control" placeholder="Enter Longitude">
-        </div>
+            <div class="form-group">
+                <label for="longitude">Longitude:</label>
+                <input type="text" name="longitude" id="longitude" class="form-control" placeholder="Enter Longitude">
+            </div>
 
-        <button type="submit" class="btn btn-primary">Create</button>
-    </form>
-
+            <button type="submit" class="btn btn-primary mt-3">Create</button>
+        </form>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const stateCodeMap = {}; // Object to map state names to codes
@@ -102,9 +103,9 @@
                             districts.forEach(district => {
                                 let option = document.createElement('option');
                                 option.value = district
-                                .name; // Set the district name as the value
+                                    .name; // Set the district name as the value
                                 option.text = district
-                                .name; // Set the district name as the text
+                                    .name; // Set the district name as the text
                                 districtSelect.appendChild(option);
                             });
                         })

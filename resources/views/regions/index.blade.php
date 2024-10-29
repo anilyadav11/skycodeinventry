@@ -46,12 +46,23 @@
         </table>
     </div>
     <!-- Pagination Links -->
-    <div class="d-flex justify-content-between align-items-center my-4">
-        <div>
-            Showing {{ $regions->firstItem() }} to {{ $regions->lastItem() }} of {{ $regions->total() }} entries
-        </div>
-        <div>
-            {{ $regions->links() }} <!-- This will generate the pagination links -->
+    <div class="card shadow-sm my-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="text-muted">
+                Showing {{ $regions->firstItem() }} - {{ $regions->lastItem() }} of {{ $regions->total() }}
+            </div>
+            <div>
+                <!-- Add custom styling to the pagination links -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <li class="page-item">
+                            {{ $regions->onEachSide(1)->links('pagination::bootstrap-4') }}
+                            <!-- Use Bootstrap 4 pagination styling -->
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
+
 @endsection
