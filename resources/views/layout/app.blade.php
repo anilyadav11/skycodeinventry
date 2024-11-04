@@ -73,6 +73,30 @@
         </div>
     </div>
     <script src={{ asset('js/main.js') }}></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#region_zone_id').on('change', function() {
+                var zoneId = $(this).val();
+                $('#state_id').empty().append(
+                    '<option value="">Select State</option>'); // Clear and reset state dropdown
+
+                if (zoneId) {
+                    $.ajax({
+                        url: '/get-states/' + zoneId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(key, value) {
+                                $('#state_id').append('<option value="' + key + '">' +
+                                    value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
 </body>
 

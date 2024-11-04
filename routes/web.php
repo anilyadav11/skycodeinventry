@@ -9,6 +9,7 @@ use App\Http\Controllers\RSMController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\URoleController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\BeatController;
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -29,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     });
     Route::resource('customers', CustomerController::class);
+    Route::resource('beats', BeatController::class);
 });
 Route::get('/api/states', [RegionController::class, 'fetchStates']);
 Route::get('/api/districts/{stateCode}', [RegionController::class, 'fetchDistricts']);
@@ -43,7 +45,7 @@ Route::get('/regions/{region}', function ($region) {
 
     return response()->json($data);
 });
-
+Route::get('/get-states/{zoneId}', [BeatController::class, 'getStates']);
 
 
 Route::get('/', function () {

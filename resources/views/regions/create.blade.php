@@ -23,13 +23,7 @@
             </div>
 
             <!-- State Dropdown -->
-            <div class="form-group">
-                <label for="state">State:</label>
-                <select id="state" name="state" class="form-control" required>
-                    <option value="">Select State</option>
-                </select>
-                <div class="invalid-feedback">Please select a state.</div>
-            </div>
+
             <div class="form-group">
                 <label for="area">State:</label>
                 <input type="text" name="state" id="state" class="form-control" placeholder="Enter State">
