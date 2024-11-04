@@ -11,24 +11,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('u_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone');
-            $table->string('designation');
-            $table->string('empid')->unique();
-            $table->decimal('salary', 10, 2);
-            $table->date('doj'); // Date of Joining
+            $table->string('level')->unique(); // e.g., Level 1
+            $table->string('role'); // e.g., Admin
+            $table->string('description'); // e.g., Administrative
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('u_roles');
     }
 };

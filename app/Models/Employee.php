@@ -1,30 +1,35 @@
 <?php
 
-// app/Models/Employee.php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    use HasFactory;
-
-    // Fillable attributes to allow mass assignment
     protected $fillable = [
-        'name',
+        'user_code',
+        'emp_name',
+        'user_role_id',
+        'phone_no',
         'email',
-        'phone',
-        'designation',
-        'empid',
-        'salary',
-        'doj',
+        'address',
+        'region_id',
+        'state',
+        'district',
+        'area',
+        'beat',
+        'rsm',
+        'asm',
+        'ase',
+        'so',
+        'sr',
+        'distributor',
+        'super_stokiest',
+        'emp_code',
     ];
-
-    // Optionally, if you need to cast any attributes, like salary as decimal and DOJ as date:
-    protected $casts = [
-        'salary' => 'decimal:2',
-        'doj' => 'date',
-    ];
+    // Define the relationship with UserRole
+    public function userRole()
+    {
+        return $this->belongsTo(URole::class, 'user_role_id');
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Employee;
 
 class RegionController extends Controller
 {
@@ -71,9 +72,15 @@ class RegionController extends Controller
 
     public function destroy(Region $region)
     {
+        // Set `region_id` to null for all employees associated with this region
+        Employee::where('region_id', $region->id)->update(['region_id' => null]);
+
+        // Now you can safely delete the region
         $region->delete();
+
         return redirect()->route('regions.index')->with('success', 'Region deleted successfully.');
     }
+
 
     protected $apiKey = '579b464db66ec23bdd000001c5d494b67b12417971849d01c63d59bd'; // Your API Key
     protected $baseApiUrl = 'https://api.data.gov.in/resource/5d36676e-b692-4e62-b5e8-38aa9a48724c';

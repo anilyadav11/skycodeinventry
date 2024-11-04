@@ -30,14 +30,15 @@
                 </select>
                 <div class="invalid-feedback">Please select a state.</div>
             </div>
-
-            <!-- District Dropdown -->
             <div class="form-group">
-                <label for="district">District:</label>
-                <select id="district" name="district" class="form-control" required>
-                    <option value="">Select District</option>
-                </select>
-                <div class="invalid-feedback">Please select a district.</div>
+                <label for="area">State:</label>
+                <input type="text" name="state" id="state" class="form-control" placeholder="Enter State">
+            </div>
+
+
+            <div class="form-group">
+                <label for="area">District:</label>
+                <input type="text" name="district" id="district" class="form-control" placeholder="Enter District">
             </div>
 
             <!-- Other Inputs -->
@@ -64,7 +65,7 @@
             <button type="submit" class="btn btn-primary mt-3">Create</button>
         </form>
     </div>
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const stateCodeMap = {}; // Object to map state names to codes
 
@@ -113,7 +114,7 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 
 
 

@@ -57,13 +57,13 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('design.overview') }}" class="nav-link">Overview</a>
                             </li>
-                            <li class="nav-item"><a href="" class="nav-link">RSA</a></li>
-                            <li class="nav-item"><a href="pages/tasks/list-view-aside.html" class="nav-link">List
-                                    View w/ Details</a></li>
-                            <li class="nav-item"><a href="pages/tasks/board-view.html" class="nav-link">Board
-                                    View</a></li>
-                            <li class="nav-item"><a href="pages/tasks/create-task.html" class="nav-link">Create
-                                    Task</a></li>
+                            <li class="nav-item"><a href="{{ route('rsms.index') }}" class="nav-link">RSM</a>
+                            </li>
+                            <li class="nav-item"><a href="{{ route('roles.index') }}" class="nav-link">Roles</a></li>
+                            <li class="nav-item"><a href="{{ route('employees.index') }}" class="nav-link">User</a>
+                            </li>
+                            <li class="nav-item"><a href="{{ route('customers.index') }}"
+                                    class="nav-link">Customers</a></li>
                         </ul>
                     </div>
                 </li>
@@ -114,7 +114,8 @@
                         </a>
 
                         <!-- Hidden form to trigger logout -->
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                            style="display: none;">
                             @csrf
                         </form>
                     </div>

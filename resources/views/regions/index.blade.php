@@ -3,6 +3,31 @@
 
 @section('content')
     <h2 class="m-4">Regions List</h2>
+    <!-- Display Success Message -->
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Display Error Message -->
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Display Validation Errors -->
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <a href="{{ route('regions.create') }}" class="btn btn-primary m-3 ">Create New Region</a>
 
     <div class="table-responsive p-5">
