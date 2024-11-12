@@ -15,6 +15,31 @@
         rel="stylesheet">
     <link rel="stylesheet" href={{ asset('cdn.jsdelivr.net/npm/bootstrap-icons%401.7.2/font/bootstrap-icons.css') }}>
     <script defer="defer" data-domain="webpixels.works" src={{ asset('plausible.io/js/script.js') }}></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places">
+    </script>
+    <style>
+        #location-form {
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
@@ -72,14 +97,20 @@
             </main>
         </div>
     </div>
+
+
     <script src={{ asset('js/main.js') }}></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // When Region Zone is selected
             $('#region_zone_id').on('change', function() {
                 var zoneId = $(this).val();
-                $('#state_id').empty().append(
-                    '<option value="">Select State</option>'); // Clear and reset state dropdown
+                $('#state_id').empty().append('<option value="">Select State</option>');
+                $('#district_id').empty().append('<option value="">Select District</option>');
+                $('#area_id').empty().append('<option value="">Select Area</option>');
+                $('#beats-container').empty(); // Clear beats
 
                 if (zoneId) {
                     $.ajax({
@@ -88,12 +119,176 @@
                         dataType: 'json',
                         success: function(data) {
                             $.each(data, function(key, value) {
-                                $('#state_id').append('<option value="' + key + '">' +
-                                    value + '</option>');
+                                if ($('#state_id option[value="' + key + '"]')
+                                    .length === 0) {
+                                    $('#state_id').append('<option value="' + key +
+                                        '">' + value + '</option>');
+                                }
                             });
                         }
                     });
                 }
+            });
+
+            // When State is selected
+            // $('#state_id').on('change', function() {
+            //     var stateName = $(this).find('option:selected').text(); // Get the state name
+            //     $('#district_id').empty().append('<option value="">Select District</option>');
+            //     $('#area_id').empty().append('<option value="">Select Area</option>');
+            //     $('#beats-container').empty(); // Clear beats
+
+            //     if (stateName) {
+            //         $.ajax({
+            //             url: '/get-districts/' + stateName, // Send the state name
+            //             type: 'GET',
+            //             dataType: 'json',
+            //             success: function(data) {
+            //                 $.each(data, function(key, value) {
+            //                     if ($('#district_id option[value="' + key + '"]')
+            //                         .length === 0) {
+            //                         $('#district_id').append('<option value="' + key +
+            //                             '">' + value + '</option>');
+            //                     }
+            //                 });
+            //             },
+            //             error: function(jqXHR, textStatus, errorThrown) {
+            //                 console.error('Error fetching districts: ', textStatus,
+            //                     errorThrown);
+            //             }
+            //         });
+            //     }
+            // });
+
+            // When District is selected
+            $('#district_id').on('change', function() {
+                var districtName = $(this).find('option:selected').text(); // Get the district name
+                $('#area_id').empty().append('<option value="">Select Area</option>');
+                $('#beats-container').empty(); // Clear beats
+
+                if (districtName) {
+                    $.ajax({
+                        url: '/get-areas/' + districtName, // Send the district name
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(key, value) {
+                                if ($('#area_id option[value="' + key + '"]').length ===
+                                    0) {
+                                    $('#area_id').append('<option value="' + key +
+                                        '">' + value + '</option>');
+                                }
+                            });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching areas: ', textStatus, errorThrown);
+                        }
+                    });
+                }
+            });
+
+            $('#area_id').on('change', function() {
+                var areaId = $(this).val(); // Get the area ID
+                $('#beats-container').empty(); // Clear previous beats
+
+                if (areaId) {
+                    $.ajax({
+                        url: '/get-beats-by-area/' + areaId, // Fetch beats based on area
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                var beatsHtml = '';
+                                // Loop through each beat (beat_1 to beat_12)
+                                for (var i = 1; i <= 12; i++) {
+                                    var beatKey = 'beat_' + i;
+                                    if (response.beats[beatKey]) {
+                                        beatsHtml += '<div class="col-6 col-md-4 col-lg-2">';
+                                        beatsHtml += '<div class="form-check">';
+                                        beatsHtml +=
+                                            '<input type="checkbox" class="form-check-input" name="beats[]" value="' +
+                                            response.beats[beatKey] + '" id="beat_' + i + '">';
+                                        beatsHtml +=
+                                            '<label class="form-check-label" for="beat_' + i +
+                                            '">' + response.beats[beatKey] + '</label>';
+                                        beatsHtml += '</div>';
+                                        beatsHtml += '</div>';
+                                    }
+                                }
+                                $('#beats-container').html(beatsHtml);
+                            } else {
+                                alert('No beats found for this area');
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching beats: ', textStatus, errorThrown);
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            function fetchEmployees(locationType, locationId) {
+                $.ajax({
+                    url: '/get-employees/' + locationType + '/' + locationId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        updateEmployeeDropdown(response.employees);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error fetching employees: ', textStatus, errorThrown);
+                    }
+                });
+            }
+
+            function updateEmployeeDropdown(employees) {
+                const rsmDropdown = $('#rsm').empty().append('<option value="">Select RSM</option>');
+                const asmDropdown = $('#asm').empty().append('<option value="">Select ASM</option>');
+                const aseDropdown = $('#ase').empty().append('<option value="">Select ASE</option>');
+                const soDropdown = $('#so').empty().append('<option value="">Select SO</option>');
+                const seDropdown = $('#se').empty().append('<option value="">Select SE</option>');
+
+                employees.forEach(employee => {
+                    const option = `<option value="${employee.id}">${employee.employee_name}</option>`;
+                    switch (employee.user_role_id) {
+                        case 1:
+                            rsmDropdown.append(option);
+                            break;
+                        case 2:
+                            asmDropdown.append(option);
+                            break;
+                        case 3:
+                            aseDropdown.append(option);
+                            break;
+                        case 4:
+                            soDropdown.append(option);
+                            break;
+                        case 5:
+                            seDropdown.append(option);
+                            break;
+                    }
+                });
+            }
+
+            // Fetch employees when region, state, district, or area is selected
+            $('#region_zone_id').on('change', function() {
+                fetchEmployees('region', $(this).val());
+            });
+
+            $('#state_id').on('change', function() {
+                fetchEmployees('state', $(this).val());
+            });
+
+            $('#district_id').on('change', function() {
+                fetchEmployees('district', $(this).val());
+            });
+
+            $('#area_id').on('change', function() {
+                fetchEmployees('area', $(this).val());
             });
         });
     </script>

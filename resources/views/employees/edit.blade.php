@@ -2,175 +2,218 @@
 
 @section('content')
     <div class="container">
-        <h1>Edit Employee</h1>
-        <form action="{{ route('employees.update', $employee) }}" method="POST">
+        <h2>Edit Employee</h2>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('employees.update', $employee->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <div class="form-group">
-                <label>User Code</label>
-                <input type="text" name="user_code" class="form-control" value="{{ $employee->user_code }}" required>
+
+            <!-- User Code (Disabled, can't edit) -->
+            <div class="mb-3">
+                <label for="user_code" class="form-label">User Code</label>
+                <input type="text" class="form-control" name="user_code" id="user_code" value="{{ $employee->user_code }}"
+                    disabled>
             </div>
-            <div class="form-group">
-                <label>EMP Name</label>
-                <input type="text" name="emp_name" class="form-control" value="{{ $employee->emp_name }}" required>
+
+            <!-- Employee Name -->
+            <div class="mb-3">
+                <label for="employee_name" class="form-label">Employee Name</label>
+                <input type="text" class="form-control" name="employee_name" id="employee_name"
+                    value="{{ old('employee_name', $employee->employee_name) }}" required>
             </div>
-            <div class="form-group">
-                <label>User Role</label>
-                <select name="user_role_id" class="form-control" required>
+
+            <!-- User Role -->
+            <div class="mb-3">
+                <label for="user_role_id" class="form-label">User Role</label>
+                <select class="form-control" name="user_role_id" id="user_role_id" required>
+                    <option value="">Select Role</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->id }}" {{ $role->id == $employee->user_role_id ? 'selected' : '' }}>
-                            {{ $role->role }}</option>
+                        <option value="{{ $role->id }}" {{ $employee->user_role_id == $role->id ? 'selected' : '' }}>
+                            {{ $role->role }}
+                        </option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label>Phone No</label>
-                <input type="text" name="phone_no" class="form-control" value="{{ $employee->phone_no }}" required>
+
+            <!-- Phone No -->
+            <div class="mb-3">
+                <label for="phone_no" class="form-label">Phone No</label>
+                <input type="text" class="form-control" name="phone_no" id="phone_no"
+                    value="{{ old('phone_no', $employee->phone_no) }}" required>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control" value="{{ $employee->email }}">
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email"
+                    value="{{ old('email', $employee->email) }}" required>
             </div>
-            <div class="form-group">
-                <label>Address</label>
-                <textarea name="address" class="form-control">{{ $employee->address }}</textarea>
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" id="address" rows="2">{{ old('address', $employee->address) }}</textarea>
             </div>
-            <div class="form-group">
-                <label>Region</label>
-                <select name="region_id" class="form-control" id="region-select" required>
+            <!-- Region Zone Dropdown -->
+            <div class="mb-3">
+                <label for="region_zone_id" class="form-label">Region Zone</label>
+                <select class="form-control" name="region_id" id="region_zone_id" required>
+                    <option value="">Select Region Zone</option>
                     @foreach ($regions as $region)
-                        <option value="{{ $region->id }}" {{ $region->id == $employee->region_id ? 'selected' : '' }}>
-                            {{ $region->region_zone }}</option>
+                        <option value="{{ $region->region_zone }}"
+                            {{ old('region_id', $employee->region_id) == $region->region_zone ? 'selected' : '' }}>
+                            {{ $region->region_zone }}
+                        </option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label for="state">State:</label>
-                <input type="text" name="state" class="form-control" id="state" value="{{ $employee->state }}">
+
+            <!-- State Dropdown -->
+            <div class="mb-3">
+                <label for="state_id" class="form-label">State</label>
+                <select class="form-control" name="state_id" id="state_id" required>
+                    {{-- <option value="">Select State</option> --}}
+                    @foreach ($states as $state)
+                        <option value="{{ $state->state }}"
+                            {{ old('state_id', $employee->state_id) == $state->state ? 'selected' : '' }}>
+                            {{ $state->state }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- District Dropdown -->
-            <div class="form-group">
-                <label for="district">District:</label>
-                <input type="text" name="district" class="form-control" id="district"
-                    value="{{ $employee->district }}">
-            </div>
-            <div class="form-group">
-                <label>Area</label>
-                <input type="text" name="area" class="form-control" id="area-input">
-            </div>
-            <div class="form-group">
-                <label>Beat</label>
-                <select name="beat" class="form-control">
-                    <option value="">Select Beat</option>
-                    @for ($i = 1; $i <= 12; $i++)
-                        <option value="Beat {{ $i }}" {{ $employee->beat == "Beat {$i}" ? 'selected' : '' }}>
-                            Beat {{ $i }}</option>
-                    @endfor
+            <div class="mb-3">
+                <label for="district_id" class="form-label">District</label>
+                <select class="form-control" name="district_id" id="district_id" required>
+                    {{-- <option value="">Select District</option> --}}
+                    @foreach ($districts as $district)
+                        <option value="{{ $district->district }}"
+                            {{ old('district_id', $employee->district_id) == $district->district ? 'selected' : '' }}>
+                            {{ $district->district }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label>RSM</label>
-                <select name="rsm" class="form-control" id="region-select" required>
-                    <option value="">Select RSM</option>
-                    @foreach ($employees as $emp)
-                        <option value="{{ $emp->rsm }}" {{ $emp->rsm == $employee->rsm ? 'selected' : '' }}>
-                            {{ $emp->rsm }}
+
+            <!-- Area Dropdown -->
+            <div class="mb-3">
+                <label for="area_id" class="form-label">Area</label>
+                <select class="form-control" name="area_id" id="area_id" required>
+                    {{-- <option value="">Select Area</option> --}}
+                    @foreach ($areas as $area)
+                        <option value="{{ $area->area }}"
+                            {{ old('area_id', $employee->area_id) == $area->area ? 'selected' : '' }}>
+                            {{ $area->area }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
 
-            <div class="form-group">
-                <label>ASM</label>
-                <input type="text" name="asm" class="form-control" value="{{ $employee->asm }}">
+            <!-- Beats -->
+            <!-- Multi-Beat Selection with Checkboxes -->
+            <div class="mb-3">
+                <label for="beats" class="form-label">Beats</label>
+                <div class="form-check-group">
+                    <div class="row">
+                        @foreach ($beats as $beat)
+                            @foreach (range(1, 12) as $index)
+                                @php
+                                    $beat_column = 'beat_' . $index;
+                                @endphp
+                                @if ($beat->$beat_column)
+                                    <!-- Responsive column setup -->
+                                    <div class="col-6 col-md-4 col-lg-2">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="beats[]"
+                                                id="beat_{{ $loop->parent->index }}_{{ $loop->index }}"
+                                                value="{{ $beat->$beat_column }}"
+                                                {{ in_array($beat->$beat_column, old('beats', $employee->beats ?? [])) ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="beat_{{ $loop->parent->index }}_{{ $loop->index }}">
+                                                {{ $beat->$beat_column }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>ASE</label>
-                <input type="text" name="ase" class="form-control" value="{{ $employee->ase }}">
+
+            <div class="mb-3">
+                <label for="beats" class="form-label">Beats</label>
+                <div class="form-check-group">
+                    <div class="row" id="beats-container">
+                        <!-- Dynamically populated beats will go here -->
+
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>SO</label>
-                <input type="text" name="so" class="form-control" value="{{ $employee->so }}">
+
+            <!-- Distributors (Multi-Select with Checkboxes) -->
+
+            <div class="mb-3">
+                <label for="distributors" class="form-label">Distributors</label>
+                <div class="form-check-group">
+                    <div class="row">
+                        @foreach ($distributors as $distributor)
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="distributors[]"
+                                        id="distributor_{{ $distributor->id }}" value="{{ $distributor->id }}"
+                                        {{ in_array($distributor->id, old('distributors', is_array($employee->distributors) ? $employee->distributors : json_decode($employee->distributors, true) ?? [])) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="distributor_{{ $distributor->id }}">
+                                        {{ $distributor->customer_name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>SR</label>
-                <input type="text" name="sr" class="form-control" value="{{ $employee->sr }}">
+
+            <!-- Super Stockists (Multi-Select with Checkboxes) -->
+            <div class="mb-3">
+                <label for="super_stockists" class="form-label">Super Stockists</label>
+                <div class="form-check-group">
+                    <div class="row">
+                        @foreach ($superStockists as $superStockist)
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="super_stockists[]"
+                                        id="super_stockist_{{ $superStockist->id }}" value="{{ $superStockist->id }}"
+                                        {{ in_array($superStockist->id, old('super_stockists', is_array($employee->super_stockists) ? $employee->super_stockists : json_decode($employee->super_stockists, true) ?? [])) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="super_stockist_{{ $superStockist->id }}">
+                                        {{ $superStockist->customer_name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Distributor</label>
-                <select name="distributor[]" class="form-control" multiple>
-                    <option value="Distributor 1">Distributor 1</option>
-                    <option value="Distributor 2">Distributor 2</option>
-                    <option value="Distributor 3">Distributor 3</option>
-                </select>
+
+
+
+            <!-- Employee Code -->
+            <div class="mb-3">
+                <label for="emp_code" class="form-label">Employee Code</label>
+                <input type="text" class="form-control" name="emp_code" id="emp_code"
+                    value="{{ old('emp_code', $employee->emp_code) }}" required>
             </div>
-            <div class="form-group">
-                <label>Super Stokiest (SS)</label>
-                <select name="super_stokiest[]" class="form-control" multiple>
-                    <option value="SS 1">SS 1</option>
-                    <option value="SS 2">SS 2</option>
-                    <option value="SS 3">SS 3</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>EMP CODE</label>
-                <input type="text" name="emp_code" class="form-control" value="{{ $employee->emp_code }}"
-                    placeholder="Editable, Created By HR">
-            </div>
-            <button type="submit" class="btn btn-success">Update Employee</button>
+
+            <button type="submit" class="btn btn-primary">Update Employee</button>
         </form>
     </div>
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stateCodeMap = {}; // Object to map state names to codes
-
-            // Fetch states when the page loads
-            fetch('/api/states')
-                .then(response => response.json())
-                .then(states => {
-                    let stateSelect = document.getElementById('state');
-                    // Populate the state dropdown
-                    Object.entries(states).forEach(([code, name]) => {
-                        // Store the state code in the mapping object
-                        stateCodeMap[name] = code;
-
-                        let option = document.createElement('option');
-                        option.value = name; // Set the state name as the value
-                        option.text = name; // Set the state name as the text
-                        stateSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching states:', error));
-
-            // Fetch districts based on selected state
-            document.getElementById('state').addEventListener('change', function() {
-                const stateName = this.value; // Get the selected state name
-                const stateCode = stateCodeMap[stateName]; // Convert name to code
-                let districtSelect = document.getElementById('district');
-
-                // Clear previous districts
-                districtSelect.innerHTML = '<option value="">Select District</option>';
-
-                if (stateCode) {
-                    // Fetch districts for the selected state
-                    fetch(`/api/districts/${stateCode}`)
-                        .then(response => response.json())
-                        .then(districts => {
-                            districts.forEach(district => {
-                                let option = document.createElement('option');
-                                option.value = district
-                                    .name; // Set the district name as the value
-                                option.text = district
-                                    .name; // Set the district name as the text
-                                districtSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching districts:', error));
-                }
-            });
-        });
-    </script> --}}
 @endsection

@@ -2,167 +2,191 @@
 
 @section('content')
     <div class="container">
-        <h1>Add Employee</h1>
+        <h2>Create Employee</h2>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form action="{{ route('employees.store') }}" method="POST">
             @csrf
-            <div class="form-group">
-                <label>User Code</label>
-                <input type="text" name="user_code" class="form-control" required>
+
+            <!-- User Code -->
+            <div class="mb-3">
+                <label for="user_code" class="form-label">User Code</label>
+                <input type="text" class="form-control" name="user_code" id="user_code" value="Auto-generated" disabled>
             </div>
-            <div class="form-group">
-                <label>EMP Name</label>
-                <input type="text" name="emp_name" class="form-control" required>
+
+            <!-- Employee Name -->
+            <div class="mb-3">
+                <label for="employee_name" class="form-label">Employee Name</label>
+                <input type="text" class="form-control" name="employee_name" id="employee_name" required>
             </div>
-            <div class="form-group">
-                <label>User Role</label>
-                <select name="user_role_id" class="form-control" required>
+
+            <!-- User Role -->
+            <div class="mb-3">
+                <label for="user_role_id" class="form-label">User Role</label>
+                <select class="form-control" name="user_role_id" id="user_role_id" required>
+                    <option value="">Select Role</option>
                     @foreach ($roles as $role)
                         <option value="{{ $role->id }}">{{ $role->role }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
-                <label>Phone No</label>
-                <input type="text" name="phone_no" class="form-control" required>
+
+            <!-- Phone No -->
+            <div class="mb-3">
+                <label for="phone_no" class="form-label">Phone No</label>
+                <input type="text" class="form-control" name="phone_no" id="phone_no" required>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control">
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email" required>
             </div>
-            <div class="form-group">
-                <label>Address</label>
-                <textarea name="address" class="form-control"></textarea>
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" id="address" rows="2"></textarea>
             </div>
-            <div class="form-group">
-                <label>Region</label>
-                <select name="region_id" class="form-control" id="region-select" required>
+
+            <!-- Region Dropdown -->
+            <div class="mb-3">
+                <label for="region_zone_id" class="form-label">Region Zone</label>
+                <select class="form-control" name="region_id" id="region_zone_id" required>
+                    <option value="">Select Region Zone</option>
                     @foreach ($regions as $region)
-                        <option value="{{ $region->id }}">{{ $region->region_zone }}</option>
+                        <option value="{{ $region->region_zone }}">{{ $region->region_zone }}</option>
                     @endforeach
                 </select>
             </div>
 
-
-            <div class="form-group">
-                <label for="state">State:</label>
-                {{-- <input type="text" name="" class="form-control" id="state"> --}}
-                <select name="state" class="form-control" id="region-select" required>
-                    @foreach ($regions as $region)
-                        <option value="{{ $region->id }}">{{ $region->state }}</option>
-                    @endforeach
+            <!-- State Dropdown -->
+            <div class="mb-3">
+                <label for="state_id" class="form-label">State</label>
+                <select class="form-control" name="state_id" id="state_id" required>
+                    <option value="">Select State</option>
                 </select>
             </div>
 
             <!-- District Dropdown -->
-            <div class="form-group">
-                <label for="district">District:</label>
-                <input type="text" name="district" class="form-control" id="district">
-            </div>
-            <div class="form-group">
-                <label>Area</label>
-                <input type="text" name="area" class="form-control" id="area-input">
-            </div>
-            <div class="form-group">
-                <label>Beat</label>
-                <select name="beat" class="form-control">
-                    <option value="">Select Beat</option>
-                    @for ($i = 1; $i <= 12; $i++)
-                        <option value="Beat {{ $i }}">Beat {{ $i }}</option>
-                    @endfor
+            <div class="mb-3">
+                <label for="district_id" class="form-label">District</label>
+                <select class="form-control" name="district_id" id="district_id" required>
+                    <option value="">Select District</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>RSM</label>
-                <input type="text" name="rsm" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>ASM</label>
-                <input type="text" name="asm" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>ASE</label>
-                <input type="text" name="ase" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>SO</label>
-                <input type="text" name="so" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>SR</label>
-                <input type="text" name="sr" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Distributor</label>
-                <select name="distributor[]" class="form-control" multiple>
-                    <option value="Distributor 1">Distributor 1</option>
-                    <option value="Distributor 2">Distributor 2</option>
-                    <option value="Distributor 3">Distributor 3</option>
+
+            <!-- Area Dropdown -->
+            <div class="mb-3">
+                <label for="area_id" class="form-label">Area</label>
+                <select class="form-control" name="area_id" id="area_id" required>
+                    <option value="">Select Area</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Super Stokiest (SS)</label>
-                <select name="super_stokiest[]" class="form-control" multiple>
-                    <option value="SS 1">SS 1</option>
-                    <option value="SS 2">SS 2</option>
-                    <option value="SS 3">SS 3</option>
+
+
+
+
+            <div class="mb-3">
+                <label for="rsm" class="form-label">Respective RSM</label>
+                <select class="form-control" name="rsm_id" id="rsm">
+                    <option value="">Select RSM</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>EMP CODE</label>
-                <input type="text" name="emp_code" class="form-control" placeholder="Editable, Created By HR">
+
+            <div class="mb-3">
+                <label for="asm" class="form-label">Respective ASM</label>
+                <select class="form-control" name="asm_id" id="asm">
+                    <option value="">Select ASM</option>
+                </select>
             </div>
-            <button type="submit" class="btn btn-success">Save Employee</button>
+
+            <div class="mb-3">
+                <label for="ase" class="form-label">Respective ASE</label>
+                <select class="form-control" name="ase_id" id="ase">
+                    <option value="">Select ASE</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="so" class="form-label">Respective SO</label>
+                <select class="form-control" name="so_id" id="so">
+                    <option value="">Select SO</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="se" class="form-label">Respective SE</label>
+                <select class="form-control" name="se_id" id="se">
+                    <option value="">Select SE</option>
+                </select>
+            </div>
+
+            <!-- Beats (Multiple Checkboxes) -->
+            <div class="mb-3">
+                <label for="beats" class="form-label">Beats</label>
+                <div class="form-check-group">
+                    <div class="row" id="beats-container">
+                        <!-- Dynamically populated beats will go here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distributors (Multiple Checkboxes) -->
+            <div class="mb-3">
+                <label for="distributors" class="form-label">Distributors</label>
+                <div class="form-check-group">
+                    <div class="row">
+                        @foreach ($distributors as $distributor)
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="distributors[]"
+                                        id="distributor_{{ $distributor->id }}" value="{{ $distributor->id }}">
+                                    <label class="form-check-label" for="distributor_{{ $distributor->id }}">
+                                        {{ $distributor->customer_name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Super Stockists (Multiple Checkboxes) -->
+            <div class="mb-3">
+                <label for="super_stockists" class="form-label">Super Stockists</label>
+                <div class="form-check-group">
+                    <div class="row">
+                        @foreach ($superStockists as $superStockist)
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="super_stockists[]"
+                                        id="super_stockist_{{ $superStockist->id }}" value="{{ $superStockist->id }}">
+                                    <label class="form-check-label" for="super_stockist_{{ $superStockist->id }}">
+                                        {{ $superStockist->customer_name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Employee Code -->
+            <div class="mb-3">
+                <label for="emp_code" class="form-label">Employee Code</label>
+                <input type="text" class="form-control" name="emp_code" id="emp_code" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Employee</button>
         </form>
     </div>
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stateCodeMap = {}; // Object to map state names to codes
-
-            // Fetch states when the page loads
-            fetch('/api/states')
-                .then(response => response.json())
-                .then(states => {
-                    let stateSelect = document.getElementById('state');
-                    // Populate the state dropdown
-                    Object.entries(states).forEach(([code, name]) => {
-                        // Store the state code in the mapping object
-                        stateCodeMap[name] = code;
-
-                        let option = document.createElement('option');
-                        option.value = name; // Set the state name as the value
-                        option.text = name; // Set the state name as the text
-                        stateSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching states:', error));
-
-            // Fetch districts based on selected state
-            document.getElementById('state').addEventListener('change', function() {
-                const stateName = this.value; // Get the selected state name
-                const stateCode = stateCodeMap[stateName]; // Convert name to code
-                let districtSelect = document.getElementById('district');
-
-                // Clear previous districts
-                districtSelect.innerHTML = '<option value="">Select District</option>';
-
-                if (stateCode) {
-                    // Fetch districts for the selected state
-                    fetch(`/api/districts/${stateCode}`)
-                        .then(response => response.json())
-                        .then(districts => {
-                            districts.forEach(district => {
-                                let option = document.createElement('option');
-                                option.value = district
-                                    .name; // Set the district name as the value
-                                option.text = district
-                                    .name; // Set the district name as the text
-                                districtSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching districts:', error));
-                }
-            });
-        });
-    </script> --}}
 @endsection

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>Create Beat</h1>
+        <h1>Edit Beat</h1>
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -13,12 +13,14 @@
             </div>
         @endif
 
-        <form action="{{ route('beats.store') }}" method="POST">
+        <form action="{{ route('beats.update', $beat->id) }}" method="POST">
             @csrf
+            @method('PUT')
+
             <div class="form-group">
                 <label for="region_zone_id">Zone</label>
                 <select name="region_zone_id" id="region_zone_id" class="form-control">
-                    <option value="">Select Zone</option>
+                    <option value="{{ $beat->region_zone_id }}" selected>{{ $beat->region_zone_id }}</option>
                     @foreach ($regions as $region)
                         <option value="{{ $region->region_zone }}">{{ $region->region_zone }}</option>
                     @endforeach
@@ -28,8 +30,11 @@
             <div class="form-group">
                 <label for="state_id">State</label>
                 <select name="state_id" id="state_id" class="form-control">
-                    <option value="">Select State</option>
-                    <!-- States will be populated based on selected zone -->
+                    @foreach ($regions as $region)
+                        @if ($region->region_zone == $beat->region_zone_id)
+                            <option value="{{ $region->state_id }}" selected>{{ $region->state_name }}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
 
@@ -39,9 +44,10 @@
                     <!-- Populate cities based on selected state -->
                 </select>
             </div>
+
             <div class="form-group">
-                <label for="area">Area</label>
-                <select name="area" id="area_id" class="form-control"></select>
+                <label for="area_id">Area</label>
+                <select name="area_id" id="area_id" class="form-control"></select>
             </div>
 
             <!-- Beat fields -->
@@ -49,7 +55,7 @@
                 <div class="form-group">
                     <label for="beat_{{ $i }}">Beat {{ $i }}</label>
                     <input type="text" name="beat_{{ $i }}" id="beat_{{ $i }}"
-                        class="form-control">
+                        value="{{ $beat->{'beat_' . $i} }}" class="form-control">
                 </div>
             @endfor
 
@@ -57,7 +63,9 @@
                 <label for="emp_role_id">EMP Role</label>
                 <select name="emp_role_id" id="emp_role_id" class="form-control">
                     @foreach ($roles as $role)
-                        <option value="{{ $role->id }}">{{ $role->role }}</option>
+                        <option value="{{ $role->id }}" @if ($role->id == $beat->emp_role_id) selected @endif>
+                            {{ $role->role }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -66,17 +74,20 @@
                 <label for="customer_type">Customer Type</label>
                 <select name="customer_type" id="customer_type" class="form-control">
                     @foreach ($types as $type)
-                        <option value="{{ $type->customer_type }}">{{ $type->customer_type }}</option>
+                        <option value="{{ $type->customer_type }}" @if ($type->customer_type == $beat->customer_type) selected @endif>
+                            {{ $type->customer_type }}
+                        </option>
                     @endforeach
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="customer_name">Customer Name</label>
-                <input type="text" name="customer_name" id="customer_name" class="form-control">
+                <input type="text" name="customer_name" id="customer_name" value="{{ $beat->customer_name }}"
+                    class="form-control">
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Save Customer</button>
+            <button type="submit" class="btn btn-primary mt-3">Update Beat</button>
         </form>
     </div>
 @endsection

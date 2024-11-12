@@ -93,9 +93,10 @@ class StateController extends Controller
         $groupedStates = [];
 
         foreach ($regions as $region => $stateKeys) {
+            $groupedStates[$region] = [];
             foreach ($stateKeys as $key) {
                 if (isset($states[$key])) {
-                    $groupedStates[$region][] = $states[$key];
+                    $groupedStates[$region][$key] = $states[$key]; // Use state code as the key
                 }
             }
         }

@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer', function (Blueprint $table) {
-            $table->id();
-            $table->string('customer_type')->unique();
-            $table->timestamps();
+        Schema::table('beats', function (Blueprint $table) {
+            $table->string('region_zone_id')->nullable(); // Adjust type if needed
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer');
+        Schema::table('beats', function (Blueprint $table) {
+            $table->dropColumn('region_zone_id');
+        });
     }
 };

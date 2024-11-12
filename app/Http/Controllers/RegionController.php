@@ -141,4 +141,53 @@ class RegionController extends Controller
             'message' => $response->body()
         ], 500);
     }
+    // app/Http/Controllers/RegionController.php
+
+    public function fetchStatesByRegion($regionZone)
+    {
+        // Define the region zones and corresponding states in India
+        $regions = [
+            'North' => ['Jammu and Kashmir', 'Punjab', 'Haryana', 'Uttarakhand', 'Himachal Pradesh'],
+            'South' => ['Andhra Pradesh', 'Karnataka', 'Kerala', 'Tamil Nadu', 'Telangana'],
+            'East' => ['West Bengal', 'Odisha', 'Bihar', 'Jharkhand', 'Assam'],
+            'West' => ['Maharashtra', 'Goa', 'Gujarat', 'Rajasthan', 'Madhya Pradesh']
+        ];
+
+        // Fetch states based on region
+        $states = $regions[$regionZone] ?? [];
+
+        return response()->json($states);
+    }
+
+    public function fetchDistrictsByState($state)
+    {
+        $apiKey = env('GOOGLE_MAPS_API_KEY');
+
+        // Make an API call to fetch places for the specified state
+        $response = Http::get("https://maps.googleapis.com/maps/api/geocode/json", [
+            'address' => $state,
+            'region' => 'IN',
+            'key' => $apiKey
+        ]);
+
+        $districts = [];
+
+        if ($response->successful()) {
+            $results = $response->json()['results'] ?? [];
+
+            foreach ($results as $result) {
+                foreach ($result['address_components'] as $component) {
+                    // Extract districts (administrative_area_level_2)
+                    if (in_array('administrative_area_level_2', $component['types'])) {
+                        $districts[] = $component['long_name'];
+                    }
+                }
+            }
+        }
+
+        // Remove duplicates and return unique district names
+        $districts = array_unique($districts);
+
+        return response()->json($districts);
+    }
 }

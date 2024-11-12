@@ -10,6 +10,7 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\URoleController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\BeatController;
+use App\Http\Controllers\CustomeridController;
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -20,32 +21,28 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('regions', RegionController::class);
     Route::get('/designation/overveiw', [designController::class, 'overview'])->name('design.overview');
     Route::resource('rsms', RSMController::class);
-    Route::resource('roles', URoleController::class);
-    Route::prefix('employees')->group(function () {
-        Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('/', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-        Route::put('/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-    });
+    Route::resource('u_roles', URoleController::class);
+    Route::resource('employees', EmployeeController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('beats', BeatController::class);
+    Route::resource('customer-creation', CustomeridController::class);
 });
 Route::get('/api/states', [RegionController::class, 'fetchStates']);
 Route::get('/api/districts/{stateCode}', [RegionController::class, 'fetchDistricts']);
 Route::get('/region-states', [StateController::class, 'getStatesByRegion']);
-Route::get('/regions/{region}', function ($region) {
-    // Fetch the state, district, and area based on the selected region
-    $data = [
-        'state' => 'State for ' . $region, // Replace with actual logic to get state
-        'district' => 'District for ' . $region, // Replace with actual logic to get district
-        'area' => 'Area for ' . $region // Replace with actual logic to get area
-    ];
-
-    return response()->json($data);
-});
+Route::patch('/employees/{employee}/toggle-status', [EmployeeController::class, 'toggleStatus'])->name('employees.toggleStatus');
 Route::get('/get-states/{zoneId}', [BeatController::class, 'getStates']);
+Route::get('/get-districts/{stateName}', [BeatController::class, 'getDistricts']);
+Route::get('/get-areas/{districtName}', [BeatController::class, 'getAreas']);
+// In your web.php (routes file)
+Route::get('/get-beats-by-area/{areaId}', [EmployeeController::class, 'getBeatsByArea']);
+Route::get('/api/states/{region}', [RegionController::class, 'fetchStatesByRegion']);
+Route::get('/api/districts/{state}', [RegionController::class, 'fetchDistrictsByState']);
+Route::get('/get-employees/{locationType}/{locationId}', [EmployeeController::class, 'getEmployeesByLocation']);
+
+
+
+
 
 
 Route::get('/', function () {

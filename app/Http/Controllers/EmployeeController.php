@@ -3,97 +3,197 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\URole; // Assuming URole is the model for user roles
-use App\Models\Region; // Assuming Region is the model for regions
+use App\Models\Region;
+use App\Models\URole;
+use App\Models\Beat;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::with('userRole')->get(); // Assuming a relationship is defined
         $user = Auth::user();
+        $status = $request->input('status');
+
+        // Filter employees based on status if selected
+        $employees = Employee::when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        })->get();
         return view('employees.index', compact('employees'), ['user' => $user]);
     }
 
     public function create()
     {
-        $roles = URole::all();
-        $regions = Region::all();
         $user = Auth::user();
-        return view('employees.create', compact('roles', 'regions'), ['user' => $user]);
+        $employees = Employee::all();
+        $roles = URole::all();
+        $regions = Region::select('region_zone')->distinct()->get();
+        $beats = Beat::select('beat_1', 'beat_2', 'beat_3', 'beat_4', 'beat_5', 'beat_6', 'beat_7', 'beat_8', 'beat_9', 'beat_10', 'beat_11', 'beat_12')->get();
+        $distributors = Customer::where('customer_type', 'Distributor')->get();
+        $superStockists = Customer::where('customer_type', 'Super Stockist')->get();
+
+        return view('employees.create', compact('roles', 'regions', 'beats', 'distributors', 'superStockists', 'employees'), ['user' => $user]);
     }
+
+
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_code' => 'required|string|unique:employees',
-            'emp_name' => 'required|string',
+            'employee_name' => 'required',
             'user_role_id' => 'required|exists:u_roles,id',
-            'phone_no' => 'required|string',
-            'email' => 'nullable|email',
-            'address' => 'nullable|string',
-            'region_id' => 'required|exists:regions,id',
-            'state' => 'nullable|string',
-            'district' => 'nullable|string',
-            'area' => 'nullable|string',
-            'beat' => 'nullable|string',
-            'rsm' => 'nullable|string',
-            'asm' => 'nullable|string',
-            'ase' => 'nullable|string',
-            'so' => 'nullable|string',
-            'sr' => 'nullable|string',
-            'distributor' => 'nullable|string',
-            'super_stokiest' => 'nullable|string',
-            'emp_code' => 'nullable|string',
+            'phone_no' => 'required|unique:employees,phone_no',
+            'email' => 'required|email|unique:employees,email',
+            'emp_code' => 'required',
+            'region_id' => 'required|exists:regions,region_zone',
         ]);
 
-        Employee::create($request->all());
+        $employee = new Employee();
+        $employee->user_code = 'SFBX' . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+
+        $employee->fill($request->except(['beats', 'distributors', 'super_stockists']));
+
+        // Assign additional fields
+        $employee->beats = $request->input('beats');
+        $employee->distributors = $request->input('distributors');
+        $employee->super_stockists = $request->input('super_stockists');
+        $employee->region_id = $request->input('region_id');
+
+        // Assign reporting hierarchy
+        $employee->rsm_id = $request->input('rsm_id');
+        $employee->asm_id = $request->input('asm_id');
+        $employee->ase_id = $request->input('ase_id');
+        $employee->so_id = $request->input('so_id');
+        $employee->se_id = $request->input('se_id');
+
+        $employee->save();
+
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
-    public function edit(Employee $employee)
+
+
+    public function show(Employee $employee)
     {
-        $roles = URole::all();
-        $regions = Region::all();
+
         $user = Auth::user();
-        $employees = Employee::all();
-        return view('employees.edit', compact('employee', 'roles', 'regions', 'employees'), ['user' => $user]);
+        return view('employees.show', compact('employee'), ['user' => $user]);
     }
 
-    public function update(Request $request, Employee $employee)
+    public function edit($id)
     {
-        $request->validate([
-            // Similar validation rules as store method
-            'user_code' => 'required|string|unique:employees',
-            'emp_name' => 'required|string',
+        $user = Auth::user();
+        $employee = Employee::findOrFail($id);
+        $roles = URole::all();
+        // Fetch distinct values from the regions table
+        $regions = Region::select('region_zone')->distinct()->get();
+        $states = Region::select('state')->distinct()->whereNotNull('state')->get();
+        $districts = Region::select('district')->distinct()->whereNotNull('district')->get();
+        $areas = Region::select('area')->distinct()->whereNotNull('area')->get();
+        $beats = Beat::all();
+        $distributors = Customer::where('customer_type', 'Distributor')->get();
+        $superStockists = Customer::where('customer_type', 'Super Stockist')->get();
+
+        return view('employees.edit', compact('employee', 'roles', 'regions', 'beats', 'distributors', 'superStockists', 'states', 'districts', 'areas'), ['user' => $user]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'employee_name' => 'required|string|max:255',
             'user_role_id' => 'required|exists:u_roles,id',
-            'phone_no' => 'required|string',
-            'email' => 'nullable|email',
+            'phone_no' => 'required|string|max:15',
+            'email' => 'required|email',
             'address' => 'nullable|string',
-            'region_id' => 'required|exists:regions,id',
-            'state' => 'nullable|string',
-            'district' => 'nullable|string',
-            'area' => 'nullable|string',
-            'beat' => 'nullable|string',
-            'rsm' => 'nullable|string',
-            'asm' => 'nullable|string',
-            'ase' => 'nullable|string',
-            'so' => 'nullable|string',
-            'sr' => 'nullable|string',
-            'distributor' => 'nullable|string',
-            'super_stokiest' => 'nullable|string',
-            'emp_code' => 'nullable|string',
+            'region_id' => 'required|exists:regions,region_zone',
+            'beats' => 'nullable|array',
+            'distributors' => 'nullable|array',
+            'super_stockists' => 'nullable|array',
+            'emp_code' => 'required|string|max:20',
         ]);
 
-        $employee->update($request->all());
-        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
+        // Find the employee by ID
+        $employee = Employee::findOrFail($id);
+
+        // Update the employee attributes
+        $employee->employee_name = $validated['employee_name'];
+        $employee->user_role_id = $validated['user_role_id'];
+        $employee->phone_no = $validated['phone_no'];
+        $employee->email = $validated['email'];
+        $employee->address = $validated['address'];
+        $employee->region_id = $validated['region_id'];
+        $employee->emp_code = $validated['emp_code'];
+
+        // Assuming you have a JSON field for beats, distributors, and super_stockists
+        $employee->beats = $validated['beats'] ?? [];
+        $employee->distributors = json_encode($validated['distributors'] ?? []);
+        $employee->super_stockists = json_encode($validated['super_stockists'] ?? []);
+
+        // Save the employee
+        $employee->save();
+
+        // Redirect back to the edit form with a success message
+        return redirect()->route('employees.index', $employee->id)
+            ->with('success', 'Employee updated successfully!');
     }
 
-    public function destroy(Employee $employee)
+    public function destroy($id)
     {
+        $employee = Employee::findOrFail($id);
         $employee->delete();
+
         return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
+    }
+    public function toggleStatus(Employee $employee)
+    {
+        // Toggle the status between 'active' and 'inactive'
+        $employee->status = $employee->status === 'active' ? 'inactive' : 'active';
+
+        $employee->save();
+
+        return redirect()->route('employees.index')->with('success', 'Employee status updated successfully.');
+    }
+
+    // Controller
+    public function getBeatsByArea($areaId)
+    {
+        $beats = Beat::where('area', $areaId)->first(); // Get the first match for the areaId
+        if ($beats) {
+            return response()->json([
+                'success' => true,
+                'beats' => $beats->toArray() // This will return all the beat data as an associative array
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No beats found for this area'
+            ]);
+        }
+    }
+    public function getEmployeesByLocation($locationType, $locationId)
+    {
+        $employees = Employee::where('status', 'active');
+
+        switch ($locationType) {
+            case 'region':
+                $employees->where('region_id', $locationId);
+                break;
+            case 'state':
+                $employees->where('state_id', $locationId);
+                break;
+            case 'district':
+                $employees->where('district_id', $locationId);
+                break;
+            case 'area':
+                $employees->where('area_id', $locationId);
+                break;
+        }
+
+        $employees = $employees->get();
+
+        return response()->json(['employees' => $employees]);
     }
 }

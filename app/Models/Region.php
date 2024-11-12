@@ -19,5 +19,6 @@ class Region extends Model
         'longitude',
     ];
 
+
     // Define any relationships if needed (e.g., with other models)
 }

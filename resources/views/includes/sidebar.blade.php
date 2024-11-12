@@ -59,12 +59,16 @@
                             </li>
                             <li class="nav-item"><a href="{{ route('rsms.index') }}" class="nav-link">RSM</a>
                             </li>
-                            <li class="nav-item"><a href="{{ route('roles.index') }}" class="nav-link">Roles</a></li>
-                            <li class="nav-item"><a href="{{ route('employees.index') }}" class="nav-link">User</a>
+                            <li class="nav-item"><a href="{{ route('u_roles.index') }}" class="nav-link">Roles</a></li>
+                            <li class="nav-item"><a href="{{ route('employees.index') }}"
+                                    class="nav-link">Employees</a>
                             </li>
-                            <li class="nav-item"><a href="{{ route('customers.index') }}"
-                                    class="nav-link">Customers</a></li>
+                            <li class="nav-item"><a href="{{ route('customers.index') }}" class="nav-link">Customer
+                                    Type</a></li>
                             <li class="nav-item"><a href="{{ route('beats.index') }}" class="nav-link">Beats</a></li>
+                            <li class="nav-item"><a href="{{ route('customer-creation.index') }}"
+                                    class="nav-link">Customer Id</a>
+                            </li>
                         </ul>
                     </div>
                 </li>

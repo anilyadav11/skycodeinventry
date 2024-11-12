@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('beats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('region_zone_id')->constrained('regions')->onDelete('cascade'); // Zone as foreign key from regions
             $table->foreignId('state_id')->nullable()->constrained('regions')->onDelete('cascade');
             $table->foreignId('district_id')->nullable()->constrained('regions')->onDelete('cascade'); // City (district)
             $table->string('area')->nullable();
