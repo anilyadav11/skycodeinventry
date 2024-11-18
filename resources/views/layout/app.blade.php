@@ -119,10 +119,8 @@
                         dataType: 'json',
                         success: function(data) {
                             $.each(data, function(key, value) {
-                                if ($('#state_id option[value="' + key + '"]')
-                                    .length === 0) {
-                                    $('#state_id').append('<option value="' + key +
-                                        '">' + value + '</option>');
+                                if ($('#state_id option[value="' + key + '"]').length === 0) {
+                                    $('#state_id').append('<option value="' + key + '">' + value + '</option>');
                                 }
                             });
                         }
@@ -131,33 +129,30 @@
             });
 
             // When State is selected
-            // $('#state_id').on('change', function() {
-            //     var stateName = $(this).find('option:selected').text(); // Get the state name
-            //     $('#district_id').empty().append('<option value="">Select District</option>');
-            //     $('#area_id').empty().append('<option value="">Select Area</option>');
-            //     $('#beats-container').empty(); // Clear beats
+            $('#state_id').on('change', function() {
+                var stateName = $(this).find('option:selected').text(); // Get the state name
+                $('#district_id').empty().append('<option value="">Select District</option>');
+                $('#area_id').empty().append('<option value="">Select Area</option>');
+                $('#beats-container').empty(); // Clear beats
 
-            //     if (stateName) {
-            //         $.ajax({
-            //             url: '/get-districts/' + stateName, // Send the state name
-            //             type: 'GET',
-            //             dataType: 'json',
-            //             success: function(data) {
-            //                 $.each(data, function(key, value) {
-            //                     if ($('#district_id option[value="' + key + '"]')
-            //                         .length === 0) {
-            //                         $('#district_id').append('<option value="' + key +
-            //                             '">' + value + '</option>');
-            //                     }
-            //                 });
-            //             },
-            //             error: function(jqXHR, textStatus, errorThrown) {
-            //                 console.error('Error fetching districts: ', textStatus,
-            //                     errorThrown);
-            //             }
-            //         });
-            //     }
-            // });
+                if (stateName) {
+                    $.ajax({
+                        url: '/get-districts/' + stateName,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(key, value) {
+                                if ($('#district_id option[value="' + key + '"]').length === 0) {
+                                    $('#district_id').append('<option value="' + key + '">' + value + '</option>');
+                                }
+                            });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching districts: ', textStatus, errorThrown);
+                        }
+                    });
+                }
+            });
 
             // When District is selected
             $('#district_id').on('change', function() {
@@ -165,17 +160,34 @@
                 $('#area_id').empty().append('<option value="">Select Area</option>');
                 $('#beats-container').empty(); // Clear beats
 
+                // Update hidden field for district
+                $('#hidden_district').val(districtName);
+
+                // Store district in session
+                $.ajax({
+                    url: '/store-district',
+                    type: 'POST',
+                    data: {
+                        district_name: districtName,
+                        _token: '{{ csrf_token() }}' // Include CSRF token for Laravel
+                    },
+                    success: function() {
+                        console.log('District stored in session');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error storing district: ', textStatus, errorThrown);
+                    }
+                });
+
                 if (districtName) {
                     $.ajax({
-                        url: '/get-areas/' + districtName, // Send the district name
+                        url: '/get-areas/' + districtName,
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
                             $.each(data, function(key, value) {
-                                if ($('#area_id option[value="' + key + '"]').length ===
-                                    0) {
-                                    $('#area_id').append('<option value="' + key +
-                                        '">' + value + '</option>');
+                                if ($('#area_id option[value="' + key + '"]').length === 0) {
+                                    $('#area_id').append('<option value="' + key + '">' + value + '</option>');
                                 }
                             });
                         },
@@ -186,30 +198,45 @@
                 }
             });
 
+            // When Area is selected
             $('#area_id').on('change', function() {
-                var areaId = $(this).val(); // Get the area ID
+                var areaName = $(this).find('option:selected').text(); // Get the area name
                 $('#beats-container').empty(); // Clear previous beats
 
-                if (areaId) {
+                // Update hidden field for area
+                $('#hidden_area').val(areaName);
+
+                // Store area in session
+                $.ajax({
+                    url: '/store-area',
+                    type: 'POST',
+                    data: {
+                        area_name: areaName,
+                        _token: '{{ csrf_token() }}' // Include CSRF token for Laravel
+                    },
+                    success: function() {
+                        console.log('Area stored in session');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error storing area: ', textStatus, errorThrown);
+                    }
+                });
+
+                if (areaName) {
                     $.ajax({
-                        url: '/get-beats-by-area/' + areaId, // Fetch beats based on area
+                        url: '/get-beats-by-area/' + areaName,
                         type: 'GET',
                         dataType: 'json',
                         success: function(response) {
                             if (response.success) {
                                 var beatsHtml = '';
-                                // Loop through each beat (beat_1 to beat_12)
                                 for (var i = 1; i <= 12; i++) {
                                     var beatKey = 'beat_' + i;
                                     if (response.beats[beatKey]) {
                                         beatsHtml += '<div class="col-6 col-md-4 col-lg-2">';
                                         beatsHtml += '<div class="form-check">';
-                                        beatsHtml +=
-                                            '<input type="checkbox" class="form-check-input" name="beats[]" value="' +
-                                            response.beats[beatKey] + '" id="beat_' + i + '">';
-                                        beatsHtml +=
-                                            '<label class="form-check-label" for="beat_' + i +
-                                            '">' + response.beats[beatKey] + '</label>';
+                                        beatsHtml += '<input type="checkbox" class="form-check-input" name="beats[]" value="' + response.beats[beatKey] + '" id="beat_' + i + '">';
+                                        beatsHtml += '<label class="form-check-label" for="beat_' + i + '">' + response.beats[beatKey] + '</label>';
                                         beatsHtml += '</div>';
                                         beatsHtml += '</div>';
                                     }
@@ -225,9 +252,9 @@
                     });
                 }
             });
-
         });
     </script>
+
 
     <script>
         $(document).ready(function() {
@@ -292,7 +319,147 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
 
+
+            $('#customer_type').on('change', function() {
+
+                var idcustomer = this.value;
+
+                $("#customer_name").html('');
+
+                $.ajax({
+
+                    url: "{{url('api/fetch-customers')}}",
+
+                    type: "POST",
+
+                    data: {
+
+                        customer_id: idcustomer,
+
+                        _token: '{{csrf_token()}}'
+
+                    },
+
+                    dataType: 'json',
+
+                    success: function(result) {
+
+                        $('#customer_name').html('<option value="">-- Select customer name --</option>');
+
+                        $.each(result.customers, function(key, value) {
+
+                            $("#customer_name").append('<option value="' + value
+
+                                .id + '">' + value.customer_name + '</option>');
+
+                        });
+
+
+
+                    }
+
+                });
+
+            });
+
+
+
+
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(function() {
+            // Fetch States when a Country is selected
+            $('#region-dropdown').change(function() {
+                var countryId = $(this).val();
+                if (countryId) {
+                    $.ajax({
+                        url: '{{ url("api/fetch-states") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            country_id: countryId
+                        },
+                        success: function(response) {
+                            $('#state-dropdown').empty().append('<option value="">Select State</option>');
+                            $('#district-dropdown').empty().append('<option value="">Select District</option>').prop('disabled', true);
+                            $('#area-dropdown').empty().append('<option value="">Select Area</option>').prop('disabled', true);
+
+                            $.each(response.states, function(key, state) {
+                                $('#state-dropdown').append('<option value="' + state.id + '">' + state.state + '</option>');
+                            });
+
+                            $('#state-dropdown').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#state-dropdown').empty().append('<option value="">Select State</option>').prop('disabled', true);
+                    $('#district-dropdown').empty().append('<option value="">Select District</option>').prop('disabled', true);
+                    $('#area-dropdown').empty().append('<option value="">Select Area</option>').prop('disabled', true);
+                }
+            });
+
+            // Fetch Districts when a State is selected
+            $('#state-dropdown').change(function() {
+                var stateId = $(this).val();
+                if (stateId) {
+                    $.ajax({
+                        url: '{{ url("api/fetch-distic") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            state_id: stateId
+                        },
+                        success: function(response) {
+                            $('#district-dropdown').empty().append('<option value="">Select District</option>');
+                            $('#area-dropdown').empty().append('<option value="">Select Area</option>').prop('disabled', true);
+
+                            $.each(response.districts, function(key, district) {
+                                $('#district-dropdown').append('<option value="' + district.id + '">' + district.district + '</option>');
+                            });
+
+                            $('#district-dropdown').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#district-dropdown').empty().append('<option value="">Select District</option>').prop('disabled', true);
+                    $('#area-dropdown').empty().append('<option value="">Select Area</option>').prop('disabled', true);
+                }
+            });
+
+            // Fetch Areas when a District is selected
+            $('#district-dropdown').change(function() {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '{{ url("api/fetch-area") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            district_id: districtId
+                        },
+                        success: function(response) {
+                            $('#area-dropdown').empty().append('<option value="">Select Area</option>');
+
+                            $.each(response.area, function(key, area) {
+                                $('#area-dropdown').append('<option value="' + area.id + '">' + area.area + '</option>');
+                            });
+
+                            $('#area-dropdown').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#area-dropdown').empty().append('<option value="">Select Area</option>').prop('disabled', true);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

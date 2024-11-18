@@ -7,6 +7,10 @@ use App\Models\Beat;
 use App\Models\CustomerType;
 use App\Models\Region;
 use App\Models\URole;
+use App\Models\Customer;
+use App\Models\state;
+use App\Models\district;
+use App\Models\area;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -39,7 +43,7 @@ class BeatController extends Controller
             'district_id' => 'nullable|exists:regions,id',
             'area' => 'nullable|string|max:255|exists:regions,id',
             'emp_role_id' => 'required|exists:u_roles,id',
-            'customer_type' => ['required', Rule::in($validCustomerTypes)],
+            'customer_type' => ['required'],
             'customer_name' => 'required|string|max:255',
             'beat_1' => 'nullable|string|max:255',
             'beat_2' => 'nullable|string|max:255',
@@ -68,11 +72,16 @@ class BeatController extends Controller
 
     public function edit(Beat $beat)
     {
-        $regions = Region::all();
+        $states = State::all();
+
+
+        $districts = District::all();
+        $areas = Area::all();
+        $regions = Region::select('region_zone')->distinct()->get();
         $roles = URole::all();
         $user = Auth::user();
         $types = CustomerType::all();
-        return view('beats.edit', compact('beat', 'regions', 'roles', 'types'), ['user' => $user]);
+        return view('beats.edit', compact('beat', 'states', 'districts', 'areas', 'regions', 'roles', 'types'), ['user' => $user]);
     }
 
     public function update(Request $request, Beat $beat)
@@ -89,7 +98,11 @@ class BeatController extends Controller
     public function getStates($zoneId)
     {
         // Fetch states based on the selected region zone
-        $states = Region::where('region_zone', $zoneId)->distinct()->pluck('state', 'id');
+        $states = Region::where('region_zone', $zoneId)
+            ->select('state')
+            ->distinct()
+            ->pluck('state', 'state'); // Pluck the state as both key and value to avoid duplicates
+
         return response()->json($states);
     }
 
@@ -121,5 +134,16 @@ class BeatController extends Controller
         }
 
         return response()->json($areas);
+    }
+
+
+    public function costumerdropdown(Request $request)
+
+    {
+
+        $data['customers'] = Customer::where("customer_type", $request->customer_id)
+
+            ->get(["customer_name", "id"]);
+        return response()->json($data);
     }
 }

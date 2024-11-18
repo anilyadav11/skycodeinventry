@@ -7,6 +7,9 @@ use App\Models\Region;
 use App\Models\URole;
 use App\Models\Beat;
 use App\Models\Customer;
+use App\Models\area;
+use App\Models\district;
+use App\Models\state;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,6 +44,7 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'employee_name' => 'required',
             'user_role_id' => 'required|exists:u_roles,id',
@@ -50,10 +54,27 @@ class EmployeeController extends Controller
             'region_id' => 'required|exists:regions,region_zone',
         ]);
 
-        $employee = new Employee();
-        $employee->user_code = 'SFBX' . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+        // Retrieve the last employee's user_code
+        $lastEmployee = Employee::orderBy('id', 'desc')->first();
 
+        // If an employee exists, extract and increment the numeric part of the last user_code
+        if ($lastEmployee) {
+            $lastCode = intval(substr($lastEmployee->user_code, 4)); // Extract numeric part (e.g., from SFBX0001 get 0001)
+            $newCode = str_pad($lastCode + 1, 4, '0', STR_PAD_LEFT); // Increment and pad to 4 digits
+        } else {
+            // If no employee exists, start with 0001
+            $newCode = str_pad(1, 4, '0', STR_PAD_LEFT);
+        }
+
+        // Set the new user_code with 'SFBX' prefix
+        $employee = new Employee();
+        $employee->user_code = 'SFBX' . $newCode;
+
+        // Fill in the rest of the employee data
         $employee->fill($request->except(['beats', 'distributors', 'super_stockists']));
+
+        //  $employee->district_id = $request->input('district_name');
+        //  $employee->area_id = $request->input('area_name');
 
         // Assign additional fields
         $employee->beats = $request->input('beats');
@@ -68,6 +89,7 @@ class EmployeeController extends Controller
         $employee->so_id = $request->input('so_id');
         $employee->se_id = $request->input('se_id');
 
+        // Save the employee
         $employee->save();
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
@@ -89,9 +111,13 @@ class EmployeeController extends Controller
         $roles = URole::all();
         // Fetch distinct values from the regions table
         $regions = Region::select('region_zone')->distinct()->get();
-        $states = Region::select('state')->distinct()->whereNotNull('state')->get();
-        $districts = Region::select('district')->distinct()->whereNotNull('district')->get();
-        $areas = Region::select('area')->distinct()->whereNotNull('area')->get();
+        $states = State::all();
+
+
+        $districts = District::all();
+        $areas = Area::all();
+
+
         $beats = Beat::all();
         $distributors = Customer::where('customer_type', 'Distributor')->get();
         $superStockists = Customer::where('customer_type', 'Super Stockist')->get();
@@ -101,6 +127,8 @@ class EmployeeController extends Controller
 
     public function update(Request $request, $id)
     {
+
+
         // Validate the incoming request data
         $validated = $request->validate([
             'employee_name' => 'required|string|max:255',
@@ -119,12 +147,15 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($id);
 
         // Update the employee attributes
-        $employee->employee_name = $validated['employee_name'];
+        $employee->employee_name = $request['employee_name'];
         $employee->user_role_id = $validated['user_role_id'];
         $employee->phone_no = $validated['phone_no'];
         $employee->email = $validated['email'];
         $employee->address = $validated['address'];
         $employee->region_id = $validated['region_id'];
+        $employee->state_id  = $request['state_id'];
+        $employee->district_id  = $request['district_id'];
+        $employee->area_id  = $request['area_id'];
         $employee->emp_code = $validated['emp_code'];
 
         // Assuming you have a JSON field for beats, distributors, and super_stockists

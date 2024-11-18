@@ -69,6 +69,7 @@
                             <li class="nav-item"><a href="{{ route('customer-creation.index') }}"
                                     class="nav-link">Customer Id</a>
                             </li>
+
                         </ul>
                     </div>
                 </li>
@@ -89,6 +90,22 @@
                             <path fill="none" d="M0 0h36v36H0z" />
                         </svg>
                         Task</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sidebar-products" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-products">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
+                            <path fill="black" d="M18 3a15 15 0 1 0 15 15A15 15 0 0 0 18 3Zm0 27a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM18 6a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 15a6 6 0 1 1 6-6a6 6 0 0 1-6 6Z" />
+                        </svg> Products
+                    </a>
+                    <div class="collapse" id="sidebar-products">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{ route('products.index') }}" class="nav-link">All Products</a></li>
+
+                            <li class="nav-item"><a href="{{ route('products-categories.index') }}" class="nav-link">Categories</a></li>
+
+                        </ul>
+                    </div>
                 </li>
 
 

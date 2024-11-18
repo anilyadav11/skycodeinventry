@@ -4,10 +4,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Region;
+use App\Models\State;
+use App\Models\district;
+use App\Models\area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
+use App\Models\region_type;
 
 class RegionController extends Controller
 {
@@ -21,26 +25,65 @@ class RegionController extends Controller
     public function create()
     {
         $user = Auth::user();
-        return view('regions.create', ['user' => $user]);
+        $regions_type = region_type::all();
+        return view('regions.create', compact('regions_type', 'user'));
     }
 
     public function store(Request $request)
     {
+        // Validate input
         $request->validate([
             'region_zone' => 'required',
-            'state' => 'required', // This should be the state name now
-            'district' => 'required', // This should also be the district name
-            'area' => 'nullable|string', // Ensure area can be null if not provided
-            'bzone' => 'nullable|string', // Ensure bzone can be null if not provided
-            'latitude' => 'nullable|numeric', // Ensure latitude can be null
-            'longitude' => 'nullable|numeric', // Ensure longitude can be null
+            'state' => 'required', // State name
+            'district' => 'required', // District name
+            'area' => 'nullable|string', // Area name can be null
+            'bzone' => 'nullable|string', // bzone can be null
+            'latitude' => 'nullable|numeric', // Latitude can be null
+            'longitude' => 'nullable|numeric', // Longitude can be null
         ]);
 
-        // Create a new region with the provided data
+        // Check if the state with region_zone already exists
+        $state = State::where('state', $request->state_name)
+            ->where('region_zone_id', $request->region_zone)
+            ->first();
+
+        // If state does not exist, create it
+        if (!$state) {
+            $state = State::create([
+                'state' => $request->state_name,
+                'region_zone_id' => $request->region_zone
+            ]);
+        }
+
+        // Create a new district or find existing district
+        $district = District::firstOrCreate(
+            ['district' => $request->district_name], // Find district by name
+            ['state_id' => $state->id] // If not found, create a new one with state_id
+        );
+
+        // Create a new area if provided and does not exist yet
+        if ($request->area) {
+            $area = Area::where('district_id', $district->id)
+                ->where('area', $request->area)
+                ->first();
+
+            // If area does not exist, create it
+            if (!$area) {
+                Area::create([
+                    'district_id' => $district->id, // Store district ID
+                    'area' => $request->area, // Store area name
+                    'bzone' => $request->bzone, // Store bzone if provided
+                    'latitude' => $request->latitude, // Store latitude if provided
+                    'longitude' => $request->longitude, // Store longitude if provided
+                ]);
+            }
+        }
+
+        // Create a new region
         Region::create([
             'region_zone' => $request->region_zone,
-            'state' => $request->state, // Store state name
-            'district' => $request->district, // Store district name
+            'state' => $request->state_name, // Store state name
+            'district' => $request->district_name, // Store district name
             'area' => $request->area, // Store area if provided
             'bzone' => $request->bzone, // Store bzone if provided
             'latitude' => $request->latitude, // Store latitude if provided
@@ -49,6 +92,7 @@ class RegionController extends Controller
 
         return redirect()->route('regions.index')->with('success', 'Region created successfully.');
     }
+
 
 
 

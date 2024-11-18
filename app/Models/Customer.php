@@ -34,4 +34,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Region::class, 'region_zone_id');
     }
+
+    public function customertype()
+    {
+        return $this->belongsTo(CustomerType::class);
+    }
 }

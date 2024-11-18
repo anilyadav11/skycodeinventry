@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Region;
+use App\Models\CustomerType;
+use App\Models\area;
+use App\Models\district;
+use App\Models\state;
 
 class CustomeridController extends Controller
 {
@@ -20,17 +24,18 @@ class CustomeridController extends Controller
     {
         $regions = Region::select('region_zone')->distinct()->get();
         $user = Auth::user();
-        return view('customerid.create', compact('regions', 'user'));
+        $customertype = CustomerType::all();
+        return view('customerid.create', compact('regions', 'user', 'customertype'));
     }
 
 
     public function store(Request $request)
     {
         $request->validate([
-            'region_zone_id' => 'required|exists:regions,region_zone',
-            'state_id' => 'nullable|exists:regions,id',
-            'district_id' => 'nullable|exists:regions,id',
-            'area_id' => 'nullable|exists:regions,id',
+            //    'region_zone_id' => 'required|exists:regions,region_zone',
+            //  'state_id' => 'nullable|exists:regions,id',  // Assuming 'id' is the correct column in the regions table
+            // 'district_id' => 'nullable|exists:regions,id', // Adjust similarly
+            //  'area_id' => 'nullable|exists:regions,id',      // Adjust similarly
             'customer_type' => 'required|string',
             'supplier' => 'nullable|string|max:255',
             'customer_name' => 'required|string|max:255',
@@ -47,11 +52,38 @@ class CustomeridController extends Controller
             'sr' => 'nullable|string|max:255',
         ]);
 
-        // Create a new customer
-        Customer::create($request->all());
+        // Retrieve the last customer's customer_code
+        $lastCustomer = Customer::orderBy('id', 'desc')->first();
+
+        // If a customer exists, extract and increment the numeric part of the last customer_code
+        if ($lastCustomer) {
+            $lastCode = intval(substr($lastCustomer->customer_code, 4)); // Extract numeric part (e.g., from CUST0001 get 0001)
+            $newCode = str_pad($lastCode + 1, 4, '0', STR_PAD_LEFT); // Increment and pad to 4 digits
+        } else {
+            // If no customer exists, start with 0001
+            $newCode = str_pad(1, 4, '0', STR_PAD_LEFT);
+        }
+
+        // Set the new customer_code with 'CUST' prefix
+        $customer = new Customer();
+        $customer->customer_code = 'CUST' . $newCode;
+
+        // Fill in the rest of the customer data
+        $customer->fill($request->except(['rsm', 'asm', 'ase', 'so', 'sr']));
+
+        // Assign reporting hierarchy or other custom fields if needed
+        $customer->rsm = $request->input('rsm');
+        $customer->asm = $request->input('asm');
+        $customer->ase = $request->input('ase');
+        $customer->so = $request->input('so');
+        $customer->sr = $request->input('sr');
+
+        // Save the customer
+        $customer->save();
 
         return redirect()->route('customer-creation.index')->with('success', 'Customer created successfully.');
     }
+
 
 
 
@@ -62,10 +94,18 @@ class CustomeridController extends Controller
         return view('customerid.show', compact('customer'), ['user' => $user]);
     }
 
-    public function edit(Customer $customer)
+    public function edit($id)
     {
+        $states = State::all();
+
         $user = Auth::user();
-        return view('customerid.edit', compact('customer'), ['user' => $user]);
+        $districts = District::all();
+        $areas = Area::all();
+        $customer = Customer::findOrFail($id);
+        $regions = Region::select('region_zone')->distinct()->get();
+        return view('customerid.edit', compact('customer', 'regions', 'states', 'districts', 'areas', 'user'));
+        // $user = Customer::findOrFail($customer);
+        // return view('customerid.edit', compact('customer'));
     }
 
     public function update(Request $request, Customer $customer)
@@ -80,6 +120,16 @@ class CustomeridController extends Controller
         return redirect()->route('customer-creation.index')->with('success', 'Customer updated successfully.');
     }
 
+
+    public function toggleStatus(Customer $customer)
+    {
+        // Toggle the status between 'active' and 'inactive'
+        $customer->status = $customer->status === 'active' ? 'inactive' : 'active';
+
+        $customer->save();
+
+        return redirect()->route('customer-creation.index')->with('success', 'Customer status updated successfully.');
+    }
 
 
     public function destroy(Customer $customer)
