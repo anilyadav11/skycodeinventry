@@ -460,6 +460,167 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            // Handle cascading dropdowns
+            $('#region').change(function() {
+                const regionId = $(this).val();
+                $('#state').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/states/${regionId}`, function(data) {
+                    $('#state').prop('disabled', false).html('<option value="">Select State</option>');
+                    data.forEach(state => {
+                        $('#state').append(`<option value="${state.id}">${state.state}</option>`);
+                    });
+                });
+            });
+
+            $('#state').change(function() {
+                const stateId = $(this).val();
+                $('#district').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/districts/${stateId}`, function(data) {
+                    $('#district').prop('disabled', false).html('<option value="">Select District</option>');
+                    data.forEach(district => {
+                        $('#district').append(`<option value="${district.id}">${district.district}</option>`);
+                    });
+                });
+            });
+
+            $('#district').change(function() {
+                const districtId = $(this).val();
+                $('#area').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/areas/${districtId}`, function(data) {
+                    $('#area').prop('disabled', false).html('<option value="">Select Area</option>');
+                    data.forEach(area => {
+                        $('#area').append(`<option value="${area.id}">${area.area}</option>`);
+                    });
+                });
+            });
+
+            // Load employees based on filters
+            $('#filterButton').click(function() {
+                const regionId = $('#region').val();
+                const stateId = $('#state').val();
+                const districtId = $('#district').val();
+                const areaId = $('#area').val();
+
+                $.get('/attendance/filter', {
+                    region_id: regionId,
+                    state_id: stateId,
+                    district_id: districtId,
+                    area_id: areaId
+                }, function(data) {
+                    const tableBody = $('#employeeTable');
+                    tableBody.empty();
+
+                    if (data.length > 0) {
+                        data.forEach((employee, index) => {
+                            tableBody.append(`
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${employee.employee_name}</td>
+                                <td>
+                                    <select name="employee_attendance[${index}][status]" class="form-select" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Present">Present</option>
+                                        <option value="Absent">Absent</option>
+                                        <option value="Leave">Leave</option>
+                                    </select>
+                                    <input type="hidden" name="employee_attendance[${index}][employee_id]" value="${employee.id}">
+                                </td>
+                            </tr>
+                        `);
+                        });
+                    } else {
+                        tableBody.append('<tr><td colspan="3" class="text-center">No employees available</td></tr>');
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#region').change(function() {
+                const regionId = $(this).val();
+                $('#state').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/states/${regionId}`, function(data) {
+                    $('#state').prop('disabled', false).html('<option value="">Select State</option>');
+                    data.forEach(state => {
+                        $('#state').append(`<option value="${state.id}">${state.state}</option>`);
+                    });
+                });
+            });
+
+            $('#state').change(function() {
+                const stateId = $(this).val();
+                $('#district').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/districts/${stateId}`, function(data) {
+                    $('#district').prop('disabled', false).html('<option value="">Select District</option>');
+                    data.forEach(district => {
+                        $('#district').append(`<option value="${district.id}">${district.district}</option>`);
+                    });
+                });
+            });
+
+            $('#district').change(function() {
+                const districtId = $(this).val();
+                $('#area').prop('disabled', true).html('<option value="">Loading...</option>');
+                $.get(`/areas/${districtId}`, function(data) {
+                    $('#area').prop('disabled', false).html('<option value="">Select Area</option>');
+                    data.forEach(area => {
+                        $('#area').append(`<option value="${area.id}">${area.area}</option>`);
+                    });
+                });
+            });
+
+            $('#filterButton').click(function() {
+                const formData = $('#filterForm').serialize();
+                $.get(`/attendance/filter`, formData, function(data) {
+                    const tableBody = $('#attendanceTable');
+                    tableBody.empty();
+                    if (data.length > 0) {
+                        data.forEach((employee, index) => {
+                            tableBody.append(`
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${employee.employee_name}</td>
+                                <td>${employee.region}</td>
+                                <td>${employee.state}</td>
+                                <td>${employee.district}</td>
+                                <td>${employee.area}</td>
+                            </tr>
+                        `);
+                        });
+                    } else {
+                        tableBody.append('<tr><td colspan="6" class="text-center">No data available</td></tr>');
+                    }
+                });
+            });
+        });
+
+        $('#filterButton').click(function() {
+            const formData = $('#filterForm').serialize();
+            $.get(`/attendance/filter`, formData, function(data) {
+                const tableBody = $('#attendanceTable');
+                tableBody.empty();
+                if (data.length > 0) {
+                    data.forEach((employee, index) => {
+                        tableBody.append(`
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${employee.employee_name}</td>
+                    <td>${employee.region}</td>
+                    <td>${employee.state}</td>
+                    <td>${employee.district}</td>
+                    <td>${employee.area}</td>
+                </tr>
+            `);
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="6" class="text-center">No data available</td></tr>');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

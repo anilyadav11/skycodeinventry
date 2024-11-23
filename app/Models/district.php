@@ -10,4 +10,14 @@ class district extends Model
         'state_id',
         'district',
     ];
+
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    public function areas()
+    {
+        return $this->hasMany(Area::class);
+    }
 }

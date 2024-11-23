@@ -95,7 +95,7 @@
                 <!-- Areas will be loaded dynamically based on selected district -->
             </select>
         </div>
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label for="rsm" class="form-label">Respective RSM</label>
             <select class="form-control" name="rsm_id" id="rsm">
                 <option value="">Select RSM</option>
@@ -128,7 +128,7 @@
             <select class="form-control" name="se_id" id="se">
                 <option value="">Select SE</option>
             </select>
-        </div>
+        </div> -->
 
         <!-- Beats (Multiple Checkboxes) -->
         <div class="mb-3">

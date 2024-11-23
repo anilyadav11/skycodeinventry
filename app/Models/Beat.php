@@ -30,14 +30,28 @@ class Beat extends Model
         'customer_type',
         'customer_name',
     ];
+    // public function state()
+    // {
+    //     return $this->belongsTo(Region::class, 'state_id');
+    // }
+
+    // Define the relationship to fetch district
+    // public function district()
+    // {
+    //     return $this->belongsTo(Region::class, 'district_id');
+    // }
     public function state()
     {
-        return $this->belongsTo(Region::class, 'state_id');
+        return $this->belongsTo(state::class, 'state_id');
     }
 
     // Define the relationship to fetch district
     public function district()
     {
-        return $this->belongsTo(Region::class, 'district_id');
+        return $this->belongsTo(district::class, 'district_id');
+    }
+    public function area()
+    {
+        return $this->belongsTo(area::class, 'area');
     }
 }

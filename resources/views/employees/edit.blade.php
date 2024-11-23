@@ -76,41 +76,47 @@
         </div>
 
         <!-- State Dropdown -->
-        <select id="state-dropdown" name="state_id" class="form-control" {{ $employee->region_id ? '' : 'disabled' }}>
-            <option value="">Select State</option>
-            @foreach ($states as $state)
-            <option value="{{ $state->id }}" {{ old('state_id', $employee->state_id) == $state->id ? 'selected' : '' }}>
-                {{ $state->state }}
-            </option>
-            @endforeach
-        </select>
+        <div class="mb-3">
+            <label for="state" class="form-label">State</label>
+            <select id="state-dropdown" name="state_id" class="form-control" {{ $employee->region_id ? '' : 'disabled' }}>
+                <option value="">Select State</option>
+                @foreach ($states as $state)
+                <option value="{{ $state->id }}" {{ old('state_id', $employee->state_id) == $state->id ? 'selected' : '' }}>
+                    {{ $state->state }}
+                </option>
+                @endforeach
+            </select>
 
-
+        </div>
 
         <!-- District Dropdown -->
-        <select id="district-dropdown" name="district_id" class="form-control" {{ $employee->state_id ? '' : 'disabled' }}>
-            <option value="">Select District</option>
-            @foreach ($districts as $district)
-            <option value="{{ $district->id }}" {{ old('district_id', $employee->district_id) == $district->id ? 'selected' : '' }}>
-                {{ $district->district }}
-            </option>
-            @endforeach
-        </select>
+        <div class="mb-3">
+            <label for="region_zone_id" class="form-label">Didtrict</label>
+            <select id="district-dropdown" name="district_id" class="form-control" {{ $employee->state_id ? '' : 'disabled' }}>
+                <option value="">Select District</option>
+                @foreach ($districts as $district)
+                <option value="{{ $district->id }}" {{ old('district_id', $employee->district_id) == $district->id ? 'selected' : '' }}>
+                    {{ $district->district }}
+                </option>
+                @endforeach
+            </select>
 
-
+        </div>
 
 
         <!-- Area Dropdown -->
-        <select id="area-dropdown" name="area_id" class="form-control" {{ $employee->district_id ? '' : 'disabled' }}>
-            <option value="">Select Area</option>
-            @foreach ($areas as $area)
-            <option value="{{ $area->id }}" {{ old('area_id', $employee->area_id) == $area->id ? 'selected' : '' }}>
-                {{ $area->area }}
-            </option>
-            @endforeach
-        </select>
+        <div class="mb-3">
+            <label for="region_zone_id" class="form-label">Area</label>
+            <select id="area-dropdown" name="area_id" class="form-control" {{ $employee->district_id ? '' : 'disabled' }}>
+                <option value="">Select Area</option>
+                @foreach ($areas as $area)
+                <option value="{{ $area->id }}" {{ old('area_id', $employee->area_id) == $area->id ? 'selected' : '' }}>
+                    {{ $area->area }}
+                </option>
+                @endforeach
+            </select>
 
-
+        </div>
         <!-- Beats -->
         <!-- Multi-Beat Selection with Checkboxes -->
         <div class="mb-3">
@@ -157,23 +163,16 @@
 
         <div class="mb-3">
             <label for="distributors" class="form-label">Distributors</label>
-            <div class="form-check-group">
-                <div class="row">
-                    @foreach ($distributors as $distributor)
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" name="distributors[]"
-                                id="distributor_{{ $distributor->id }}" value="{{ $distributor->id }}"
-                                {{ in_array($distributor->id, old('distributors', is_array($employee->distributors) ? $employee->distributors : json_decode($employee->distributors, true) ?? [])) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="distributor_{{ $distributor->id }}">
-                                {{ $distributor->customer_name }}
-                            </label>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
+            <select name="distributors[]" id="distributors" class="form-select" multiple>
+                @foreach ($distributors as $distributor)
+                <option value="{{ $distributor->id }}"
+                    {{ in_array($distributor->id, old('distributors', is_array($employee->distributors) ? $employee->distributors : json_decode($employee->distributors, true) ?? [])) ? 'selected' : '' }}>
+                    {{ $distributor->customer_name }}
+                </option>
+                @endforeach
+            </select>
         </div>
+
 
         <!-- Super Stockists (Multi-Select with Checkboxes) -->
         <div class="mb-3">

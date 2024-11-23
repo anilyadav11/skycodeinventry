@@ -14,6 +14,9 @@ use App\Http\Controllers\CustomeridController;
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\ProductCategorieController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ProductPricingController;
+use App\Http\Controllers\BillingController;
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -32,6 +35,27 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customer-creation', CustomeridController::class);
     Route::resource('products-categories', ProductCategorieController::class);
     Route::resource('products', ProductController::class);
+
+    //for employee attendance
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/filter', [AttendanceController::class, 'filter']);
+    Route::get('/states/{regionId}', [AttendanceController::class, 'getStates']);
+    Route::get('/districts/{stateId}', [AttendanceController::class, 'getDistricts']);
+    Route::get('/areas/{districtId}', [AttendanceController::class, 'getAreas']);
+    Route::get('/attendance/create', [AttendanceController::class, 'createAttendance'])->name('attendance.create');
+    Route::post('/attendance/store', [AttendanceController::class, 'storeAttendance'])->name('attendance.store');
+
+    Route::resource('product-pricing', ProductPricingController::class);
+    //end for employee attendance
+
+    // Route::get('/get-pricing/{productId}', [BillingController::class, 'getPricingOptions']);
+    // Route::get('/get-price/{productId}/{type}/{unitType}/{customerType}', [BillingController::class, 'getPrice']);
+    Route::get('/get-customer-types/{productId}', [BillingController::class, 'getCustomerTypes']);
+    Route::get('/get-price/{productId}/{type}/{unitType}/{customerType}', [BillingController::class, 'getPrice']);
+
+
+    Route::get('billing/create', [BillingController::class, 'create'])->name('billing.create');
+    Route::post('billing/store', [BillingController::class, 'store'])->name('billing.store');
 });
 Route::get('/api/states', [RegionController::class, 'fetchStates']);
 Route::get('/api/districts/{stateCode}', [RegionController::class, 'fetchDistricts']);

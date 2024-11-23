@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource. 
      */
     public function index()
     {
@@ -37,9 +37,9 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'price' => 'required',
+
             'sku' => 'required',
-            'tax' => 'required',
+
             'description' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'category_id' => 'required',
@@ -49,8 +49,7 @@ class ProductController extends Controller
         $request->image->move(public_path('images'), $imageName);
         product::create([
             'name' => $request->name,
-            'price' => $request->price,
-            'tax' => $request->tax,
+
             'sku' => $request->sku,
             'description' => $request->description,
             'image' => $imageName,

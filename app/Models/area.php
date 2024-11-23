@@ -13,4 +13,14 @@ class area extends Model
         'latitude',
         'longitude',
     ];
+
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'area_id');
+    }
 }

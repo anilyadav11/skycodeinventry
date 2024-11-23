@@ -108,7 +108,51 @@
                     </div>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link" href="#sidebar-attendance" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebar-attendance">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
+                            <path fill="black" d="M18 3a15 15 0 1 0 15 15A15 15 0 0 0 18 3Zm0 27a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM18 6a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 15a6 6 0 1 1 6-6a6 6 0 0 1-6 6Z" />
+                        </svg> Employee Attendance
+                    </a>
+                    <div class="collapse" id="sidebar-attendance">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{route('attendance.index')}}" class="nav-link">View Attendance</a></li>
+                            <li class="nav-item"><a href="{{route('attendance.create')}}" class="nav-link">Mark Attendance</a></li>
+                            <li class="nav-item"><a href="" class="nav-link">Attendance Reports</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#product-price" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="product-price">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
+                            <path fill="black" d="M18 3a15 15 0 1 0 15 15A15 15 0 0 0 18 3Zm0 27a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM18 6a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 15a6 6 0 1 1 6-6a6 6 0 0 1-6 6Z" />
+                        </svg> Product Pricing
+                    </a>
+                    <div class="collapse" id="product-price">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{route('product-pricing.index')}}" class="nav-link">View Price</a></li>
+                            <li class="nav-item"><a href="{{route('product-pricing.create')}}" class="nav-link">Price Create</a></li>
 
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#product-billing" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="product-billing">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
+                            <path fill="black" d="M18 3a15 15 0 1 0 15 15A15 15 0 0 0 18 3Zm0 27a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM18 6a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 15a6 6 0 1 1 6-6a6 6 0 0 1-6 6Z" />
+                        </svg> Billing
+                    </a>
+                    <div class="collapse" id="product-billing">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{route('billing.create')}}" class="nav-link">Billing</a></li>
+
+
+                        </ul>
+                    </div>
+                </li>
             </ul>
             <div class="mt-auto"></div>
             <div class="my-4 px-lg-6 position-relative">
@@ -121,7 +165,7 @@
                                 <path fill-rule="evenodd"
                                     d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                             </svg> </span><span class="flex-fill text-start text-sm font-semibold">{{ $user->name }}
-                        </span><span><i class="bi bi-chevron-expand text-white text-opacity-70"></i></span></button>
+                        </span><span><i class=" bi bi-chevron-expand text-white text-opacity-70"></i></span></button>
                     <div class="dropdown-menu dropdown-menu-end w-full">
                         <div class="dropdown-header"><span class="d-block text-sm text-muted mb-1">Signed in
                                 as</span> <span class="d-block text-heading font-semibold">{{ $user->name }}</span>

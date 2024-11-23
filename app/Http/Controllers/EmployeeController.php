@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Models\URole;
 use App\Models\Beat;
 use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\area;
 use App\Models\district;
 use App\Models\state;
@@ -29,13 +30,14 @@ class EmployeeController extends Controller
 
     public function create()
     {
+
         $user = Auth::user();
         $employees = Employee::all();
         $roles = URole::all();
         $regions = Region::select('region_zone')->distinct()->get();
         $beats = Beat::select('beat_1', 'beat_2', 'beat_3', 'beat_4', 'beat_5', 'beat_6', 'beat_7', 'beat_8', 'beat_9', 'beat_10', 'beat_11', 'beat_12')->get();
-        $distributors = Customer::where('customer_type', 'Distributor')->get();
-        $superStockists = Customer::where('customer_type', 'Super Stockist')->get();
+        $distributors = Customer::where('customer_type', '1')->get();
+        $superStockists = Customer::where('customer_type', '3')->get();
 
         return view('employees.create', compact('roles', 'regions', 'beats', 'distributors', 'superStockists', 'employees'), ['user' => $user]);
     }
@@ -119,8 +121,8 @@ class EmployeeController extends Controller
 
 
         $beats = Beat::all();
-        $distributors = Customer::where('customer_type', 'Distributor')->get();
-        $superStockists = Customer::where('customer_type', 'Super Stockist')->get();
+        $distributors = Customer::where('customer_type', '1')->get();
+        $superStockists = Customer::where('customer_type', '3')->get();
 
         return view('employees.edit', compact('employee', 'roles', 'regions', 'beats', 'distributors', 'superStockists', 'states', 'districts', 'areas'), ['user' => $user]);
     }

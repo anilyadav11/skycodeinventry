@@ -13,6 +13,7 @@
         </div>
         @enderror
     </div>
+
     <div class="form-group">
         <label for="region_zone">Category</label>
         <select name="category_id" id="category_id" class="form-control" required>
@@ -42,24 +43,8 @@
         </div>
         @enderror
     </div>
-    <div class="form-group">
-        <label for="level">Price</label>
-        <input type="text" name="price" class="form-control @error('price') is-invalid @enderror">
-        @error('price')
-        <div class="invalid-feedback">
-            {{ $message }}
-        </div>
-        @enderror
-    </div>
-    <div class="form-group">
-        <label for="level">Tax</label>
-        <input type="text" name="tax" class="form-control @error('tax') is-invalid @enderror">
-        @error('tax')
-        <div class="invalid-feedback">
-            {{ $message }}
-        </div>
-        @enderror
-    </div>
+
+
     <div class="form-group">
         <label for="role">Description</label>
         <textarea name="description" class="form-control  @error('description') is-invalid @enderror" rows="4"></textarea>

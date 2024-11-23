@@ -68,23 +68,46 @@ class Employee extends Model
         return $this->belongsTo(URole::class, 'user_role_id');
     }
 
-    public function region()
+    // public function region()
+    // {
+    //     return $this->belongsTo(Region::class, 'region_id');
+    // }
+
+    // public function state()
+    // {
+    //     return $this->belongsTo(Region::class, 'state_id');
+    // }
+
+    // public function district()
+    // {
+    //     return $this->belongsTo(Region::class, 'district_id');
+    // }
+
+    // public function area()
+    // {
+    //     return $this->belongsTo(Region::class, 'area_id');
+    // }
+
+
+
+
+    public function area()
     {
-        return $this->belongsTo(Region::class, 'region_id');
+        return $this->belongsTo(Area::class);
     }
 
     public function state()
     {
-        return $this->belongsTo(Region::class, 'state_id');
+        return $this->belongsTo(State::class);
     }
 
     public function district()
     {
-        return $this->belongsTo(Region::class, 'district_id');
+        return $this->belongsTo(District::class);
     }
 
-    public function area()
+    public function region()
     {
-        return $this->belongsTo(Region::class, 'area_id');
+        return $this->belongsTo(region_type::class, 'region_id');
     }
 }
