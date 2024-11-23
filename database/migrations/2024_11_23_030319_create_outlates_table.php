@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('outlates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('region_id')->constrained('regions'); // Dropdown for region zone
+            $table->string('region_id'); // Dropdown for region zone
             $table->foreignId('state_id')->nullable()->constrained('regions')->onDelete('set null');
             $table->foreignId('district_id')->nullable()->constrained('regions')->onDelete('set null');
             $table->foreignId('area_id')->nullable()->constrained('regions')->onDelete('set null');
