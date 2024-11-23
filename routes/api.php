@@ -6,10 +6,17 @@ use App\Http\Controllers\api\BeatController;
 use App\Http\Controllers\api\ProductController;
 use App\Http\Controllers\api\AttendanceController;
 use App\Http\Controllers\api\OutletController;
+use App\Http\Controllers\api\RegisterController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+Route::controller(RegisterController::class)->group(function () {
+    Route::post('register', 'register');
+    Route::post('login', 'login');
+});
 
 Route::get('/beats', [BeatController::class, 'index']);
 Route::post('/beats', [BeatController::class, 'store']);
