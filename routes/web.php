@@ -17,6 +17,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProductPricingController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\OutletController;
+use App\Http\Controllers\OutletTypeController;
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -35,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customer-creation', CustomeridController::class);
     Route::resource('products-categories', ProductCategorieController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('outlettype', OutletTypeController::class);
+    Route::resource('outlets', OutletController::class);
 
     //for employee attendance
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');

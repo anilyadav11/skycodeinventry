@@ -11,7 +11,7 @@ class Beat extends Model
 
     protected $fillable = [
         'region_zone_id',
-        'state_id',
+        'state_id', 
         'district_id',
         'area',
         'beat_1',

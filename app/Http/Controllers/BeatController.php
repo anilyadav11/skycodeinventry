@@ -23,7 +23,7 @@ class BeatController extends Controller
         $user = Auth::user();
         return view('beats.index', compact('beats'), ['user' => $user]);
     }
-
+ 
     public function create()
     {
         $regions = Region::select('region_zone')->distinct()->get();
@@ -66,7 +66,7 @@ class BeatController extends Controller
 
     public function show(Beat $beat)
     {
-        $user = Auth::user();
+        $user = Auth::user(); 
         return view('beats.show', compact('beat'), ['user' => $user]);
     }
 
