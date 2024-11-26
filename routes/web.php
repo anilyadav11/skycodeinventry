@@ -19,6 +19,7 @@ use App\Http\Controllers\ProductPricingController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\OutletTypeController;
+use App\Http\Controllers\StockController;
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
@@ -39,8 +40,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('outlettype', OutletTypeController::class);
     Route::resource('outlets', OutletController::class);
+    Route::resource('stocks', StockController::class);
 
-    //for employee attendance
+    //for employee attendance   
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/filter', [AttendanceController::class, 'filter']);
     Route::get('/states/{regionId}', [AttendanceController::class, 'getStates']);

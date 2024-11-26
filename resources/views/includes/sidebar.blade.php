@@ -164,7 +164,19 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{route('outlettype.index')}}" class="nav-link">Outlet Type</a></li>
                             <li class="nav-item"><a href="{{route('outlets.index')}}" class="nav-link">Outlet</a></li>
-
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#stock" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="stock">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
+                            <path fill="black" d="M18 3a15 15 0 1 0 15 15A15 15 0 0 0 18 3Zm0 27a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM18 6a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 15a6 6 0 1 1 6-6a6 6 0 0 1-6 6Z" />
+                        </svg> Stocks
+                    </a>
+                    <div class="collapse" id="stock">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{route('stocks.index')}}" class="nav-link">Stocks</a></li>
 
                         </ul>
                     </div>
